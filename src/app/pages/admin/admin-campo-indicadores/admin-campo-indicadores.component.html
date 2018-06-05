@@ -1,0 +1,162 @@
+<nb-card>
+  <nb-card-header>
+    <div class="box-header with-border">
+      Lista de Campo-Indicadores
+      <div class="box-tools pull-right">
+        <a data-toggle="modal" data-target="#myModal"  class="btn btn-block btn-success btn-xs"><i class="fa fa-plus"></i> Nueva Campo-Indicadores</a>
+      </div>
+    </div>
+  </nb-card-header>
+
+  <nb-card-body>
+    <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped row-border hover">
+      <thead>
+      <tr>
+        <th><b>N</b></th>
+        <th>
+          <b>Fecha</b>
+        </th>
+        <th>
+          <b>Tipo</b>
+        </th>
+        <th><b>Acciones</b>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let item of data; let i= index">
+        <td><b>{{i+1}}</b></td>
+        <td><b>{{item.fecha}}</b></td>
+        <td><b>{{item.tipo}}</b></td>
+        <td>
+          <button (click)="remove(item)" data-toggle="confirmation" class="btn btn-danger btn-sm"><span class="fa fa-trash"></span></button>
+          <button type="button" (click)="show(item)" data-toggle="modal" data-target="#myModalEdit" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i></button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </nb-card-body>
+</nb-card>
+
+
+<div id="myModal" class="modal fade" role="dialog" data-backdrop="static">
+    <div class="row">
+      <div class="col-lg-5">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <span>Campo - Indicadores</span>
+              <button  type="button" class="close" aria-label="Close" data-dismiss="modal">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <form [formGroup]="myForm" (submit)="anadir(myForm.value)" novalidate>
+              <div class="modal-body">
+
+                <div  class="form-group has-feedback" [ngClass]="{'has-success': myForm.controls['tipo'].valid,
+                                    'has-error': myForm.controls['tipo'].invalid && (myForm.controls['tipo'].touched || myForm.controls['tipo'].dirty)}">
+                  <label>Tipo:</label>
+                  <input type="text" formControlName="tipo" class="form-control" id="stop1" placeholder="Introduzca tipo"
+                         [class.form-control-danger]="myForm.controls['tipo'].invalid && myForm.controls['tipo'].touched" autofocus>
+                  <small class="form-text error" *ngIf="myForm.controls['tipo'].hasError('required') && (myForm.controls['tipo'].touched || myForm.controls['tipo'].dirty)">
+                    Tipo es requerido!
+                  </small>
+                </div>
+
+                <div class="row full-name-inputs">
+                  <div class="col-sm-6 form-group" [ngClass]="{'has-success': myForm.controls['fecha'].valid,
+                                            'has-error': myForm.controls['fecha'].invalid && (myForm.controls['fecha'].touched || myForm.controls['fecha'].dirty)}">
+                    <label>Fecha</label>
+                    <input type="date" formControlName="fecha" class="form-control" id="stop2" placeholder="Introduzca fecha"
+                           [class.form-control-danger]="myForm.controls['fecha'].invalid && myForm.controls['fecha'].touched" autofocus>
+                    <small class="form-text error" *ngIf="myForm.controls['fecha'].hasError('required') && (myForm.controls['fecha'].touched || myForm.controls['fecha'].dirty)">
+                      Fecha es requerido!
+                    </small>
+                  </div>
+
+                  <div  class="col-sm-6 form-group" [ngClass]="{'has-success': myForm.controls['valor'].valid,
+                                      'has-error': myForm.controls['valor'].invalid && (myForm.controls['valor'].touched || myForm.controls['valor'].dirty)}">
+                    <label>Valor:</label>
+                    <input type="text" formControlName="valor" class="form-control" id="stop3" placeholder="Introduzca Valor"
+                           [class.form-control-danger]="myForm.controls['valor'].invalid && myForm.controls['valor'].touched" autofocus>
+                    <small class="form-text error" *ngIf="myForm.controls['valor'].hasError('required') && (myForm.controls['valor'].touched || myForm.controls['valor'].dirty)">
+                      Valor es requerido!
+                    </small>
+                  </div>
+                </div>
+
+                <div  class="form-group has-feedback" [ngClass]="{'has-success': myForm.controls['detalle'].valid,
+                                    'has-error': myForm.controls['detalle'].invalid && (myForm.controls['detalle'].touched || myForm.controls['detalle'].dirty)}">
+                  <label>Detalle:</label>
+                  <textarea formControlName="detalle" class="form-control" id="stop4" placeholder="Detalle"
+                         [class.form-control-danger]="myForm.controls['detalle'].invalid && myForm.controls['detalle'].touched" autofocus></textarea>
+                  <small class="form-text error" *ngIf="myForm.controls['detalle'].hasError('required') && (myForm.controls['detalle'].touched || myForm.controls['detalle'].dirty)">
+                    Detalle es requerido!
+                  </small>
+                </div>
+
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-hero-success">
+                  Añadir
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-7">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+          <div class="modal-header">
+            <span>Campo - Indicadores</span>
+            <button  type="button" class="close" aria-label="Close" data-dismiss="modal">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+
+            <div class="modal-body">
+              <div class="content">
+                <div class="pull-right"><b>Fecha:</b> {{this.datos.fecha}} </div>
+                <div><b>Tipo:</b> {{this.datos.tipo}} </div>
+              </div>
+              <table class="table table-striped row-border hover">
+                  <thead>
+                  <tr>
+                    <th><b>Nº</b></th>
+                    <th>
+                      <b>Detalle</b>
+                    </th>
+                    <th>
+                      <b>Valor</b>
+                    </th>
+                    <th><b>Acciones</b>
+                    </th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr *ngFor="let items of dataIndicadores; let i= index">
+                    <td><b>{{i+1}}</b></td>
+                    <td><b>{{items.detalle}}</b></td>
+                    <td><b>{{items.valor}}</b></td>
+                    <td>
+                      <button (click)="removeTemporal(items)" class="btn btn-danger btn-sm"><span class="fa fa-trash"></span></button>
+                      <button type="button" (click)="postContent(item)" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i></button>
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+            </div>
+          <form [formGroup]="myForm" (submit)="post()" novalidate>
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-hero-success">
+                Guardar
+              </button>
+            </div>
+          </form>
+        </div>
+        </div>
+      </div>
+    </div>
+</div>

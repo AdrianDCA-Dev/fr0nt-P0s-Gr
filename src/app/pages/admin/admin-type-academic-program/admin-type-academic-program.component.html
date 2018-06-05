@@ -1,0 +1,145 @@
+<nb-card>
+  <nb-card-header>
+    <div class="box-header with-border">
+      Lista Tipos de Posgrados
+      <div class="box-tools pull-right">
+        <a data-toggle="modal" data-target="#myModal"  class="btn btn-block btn-success btn-xs">
+          <i class="fa fa-plus"></i> Nuevo Tipo de Posgrado
+        </a>
+      </div>
+    </div>
+  </nb-card-header>
+
+  <nb-card-body>
+    <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped row-border hover">
+      <thead>
+      <tr>
+        <th><b>N</b></th>
+        <th>
+          <b>Tipo</b>
+        </th>
+        <th>
+          <b>Descripcion</b>
+        </th>
+        <th>
+          <b>Estado</b>
+        </th>
+        <th><b>Acciones</b>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let item of data; let i= index">
+        <td><b>{{i+1}}</b></td>
+        <td><b>{{item.nombre}}</b></td>
+        <td><b id="expande">{{item.descripcion}}</b></td>
+        <td><b>{{item.valido | boolEstado}}</b></td>
+        <td>
+          <button type="button" (click)="show(item)" data-toggle="modal" data-target="#myModalEdit" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i></button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </nb-card-body>
+</nb-card>
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span>Tipo De Posgrados</span>
+        <button  type="button" class="close" aria-label="Close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form [formGroup]="myForm" (submit)="post(myForm.value)">
+        <div class="modal-body">
+          <div class="form-group has-feedback" [ngClass]="{'has-success': myForm.controls['nombre'].valid,
+                                    'has-error': myForm.controls['nombre'].invalid && (myForm.controls['nombre'].touched || myForm.controls['nombre'].dirty)}">
+            <label>Tipo</label>
+            <input type="text" formControlName="nombre"
+                   class="form-control"
+                   placeholder="Introduzca Tipo de Programa Academico"
+                   [class.form-control-danger]="myForm.controls['nombre'].invalid && myForm.controls['nombre'].touched">
+            <small class="form-text error"
+                   *ngIf="myForm.controls['nombre'].hasError('required') && (myForm.controls['nombre'].touched ||
+                   myForm.controls['nombre'].dirty)">
+              Tipo de posgrado es requerido!
+            </small>
+            <small class="form-text error"
+                   *ngIf="myForm.controls['nombre'].hasError('pattern') && (myForm.controls['nombre'].touched ||
+                   myForm.controls['nombre'].dirty)">
+              Solo letras!
+            </small>
+          </div>
+          <div class="form-group has-feedback">
+            <label>Descripcion</label>
+            <textarea formControlName="descripcion" class="form-control"  placeholder="Introduzca Descripcion">
+            </textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button [disabled]="myForm.controls['nombre'].invalid" type="submit"  class="btn btn-hero-success">
+            Guardar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<div id="myModalEdit" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span>Modificar Tipo de Posgrados</span>
+        <button  type="button" class="close" aria-label="Close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form class="form-horizontal" [formGroup]="editForm" novalidate (submit)="edit(editForm.value)">
+        <div class="modal-body">
+          <div class="form-group has-feedback" [ngClass]="{'has-success': editForm.controls['nombre'].valid,
+                                    'has-error': editForm.controls['nombre'].invalid && (editForm.controls['nombre'].touched || editForm.controls['nombre'].dirty)}">
+            <label>Tipo</label>
+            <input type="text" formControlName="nombre" class="form-control" id="input-nombre"
+                   class="form-control" placeholder="Introduzca Tipo de Programa Academico"
+                   [class.form-control-danger]="editForm.controls['nombre'].invalid && editForm.controls['nombre'].touched" autofocus>
+            <small class="form-text error" *ngIf="editForm.controls['nombre'].hasError('required') && (editForm.controls['nombre'].touched || editForm.controls['nombre'].dirty)">
+              Tipo posgrado es requerido!
+            </small>
+            <small class="form-text error"
+                   *ngIf="editForm.controls['nombre'].hasError('pattern') && (editForm.controls['nombre'].touched ||
+                   editForm.controls['nombre'].dirty)">
+              Solo letras!
+            </small>
+          </div>
+          <div class="form-group  has-feedback" [ngClass]="{'has-success': editForm.controls['valido'].valid,
+                                    'has-error': editForm.controls['valido'].invalid && (editForm.controls['valido'].touched || editForm.controls['valido'].dirty)}">
+            <label>Estado</label>
+
+            <div class="containerss">
+              <div class="form-check">
+                <input class="form-check-input" formControlName="valido" name="valido" type="radio" [value]="1" id="radio100" checked="checked"
+                       [class.form-control-danger]="editForm.controls['valido'].invalid && editForm.controls['valido'].touched">
+                <label class="form-check-label" for="radio100">Activo</label>
+              </div>
+
+              <div class="form-check">
+                <input class="form-check-input" formControlName="valido" name="valido" type="radio" [value]="0" id="radio101"
+                       [class.form-control-danger]="editForm.controls['valido'].invalid && editForm.controls['valido'].touched">
+                <label class="form-check-label" for="radio101">Inactivo</label>
+              </div>
+            </div>
+          </div>
+          <div class="form-group has-feedback">
+            <label>Descripcion</label>
+            <textarea formControlName="descripcion" class="form-control" id="input-descripcion" placeholder="Introduzca Descripcion">
+            </textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button [disabled]="editForm.controls['nombre'].invalid || editForm.controls['valido'].invalid" type="submit" class="btn btn-success"> Editar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

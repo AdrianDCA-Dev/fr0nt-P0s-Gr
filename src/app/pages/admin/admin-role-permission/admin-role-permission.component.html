@@ -1,0 +1,240 @@
+<nb-card>
+  <nb-card-header>
+     <div class="box-header with-border">
+         Lista de Roles
+            <div class="box-tools pull-right">
+              <a data-toggle="modal" data-target="#myModal"  class="btn btn-block btn-success btn-xs"><i class="fa fa-plus"></i> Nueva Rol</a>
+            </div>
+     </div>
+  </nb-card-header>
+
+  <nb-card-body>
+        <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped row-border hover">
+              <thead>
+              <tr>
+                <th><b>N</b></th>
+                <th>
+                  <b>Rol</b>
+                </th>
+                <th>
+                  <b>Nombre</b>
+                </th>
+                <th>
+                  <b>Descripcion</b>
+                </th>
+                <th><b>Acciones</b>
+                </th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let item of data; let i= index">
+                <td><b>{{i+1}}</b></td>
+                <td><b>{{item.name}}</b></td>
+                <td><b>{{item.display_name}}</b></td>
+                <td><b>{{item.description}}</b></td>
+                <td>
+                  <button (click)="remove(item)" data-toggle="confirmation" class="btn btn-danger btn-sm"><span class="fa fa-trash"></span></button>
+                  <button type="button" (click)="show(item)" data-toggle="modal" data-target="#myModalEdit" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i></button>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+  </nb-card-body>
+</nb-card>
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+         <div class="modal-header">
+          <span>Registrar Nuevo Rol</span>
+          <button  type="button" class="close" aria-label="Close" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form [formGroup]="myForm" (submit)="post(myForm.value)" novalidate>
+                <div class="modal-body">
+                  <div class="row">
+                    <div class="col-md-4">
+                      <div class="box box-solid">
+                      </div>
+                      <div class="box box-solid">
+                        <div class="box-header with-border">
+                          <h3 class="box-title">Permisos</h3>
+                        
+                        </div>
+                        <div class="box-body no-padding">
+                          <ul class="nav nav-pills nav-stacked">
+                            <label *ngFor="let permission of dataPermission">
+                        
+                                <li style="color: black">
+                                  <i style="margin-left: 10px"></i>
+                                  <input type="checkbox" [formControlName]="permission" name="permission" (change)="onChange(permission.id, $event.target.checked)"/>
+                                  {{permission.name}}
+                                </li>
+                              
+                            </label>
+                          </ul>
+                        </div>
+                        <!-- /.box-body -->
+                      </div>
+                    </div>
+                    <div class="col-md-8">
+                                <div class="form-group has-feedback" [ngClass]="{'has-success': myForm.controls['name'].valid,
+                                    'has-error': myForm.controls['name'].invalid && (myForm.controls['name'].touched || myForm.controls['name'].dirty)}">
+                                    <label>Nuevo Rol:</label>
+                                    <input type="text" formControlName="name" class="form-control" id="input-name"
+                                           class="form-control" placeholder="Nombre Completo"
+                                           [class.form-control-danger]="myForm.controls['name'].invalid && myForm.controls['name'].touched" autofocus>
+                                    <small class="form-text error" *ngIf="myForm.controls['name'].hasError('required') && (myForm.controls['name'].touched || myForm.controls['name'].dirty)">
+                                      Rol es requerido!
+                                    </small>
+                                    <small
+                                      class="form-text error"
+                                      *ngIf="myForm.controls['name'].hasError('minlength') && myForm.controls['name'].touched">
+                                      Rol requiere al menos 4 caracteres de longitud.
+                                    </small>
+                                    <small
+                                      class="form-text error"
+                                      *ngIf="myForm.controls['name'].hasError('maxlength') && myForm.controls['name'].touched">
+                                      Rol no puede exceder 15 caracteres.
+                                    </small>
+                                </div>  
+
+                                 <div class="form-group has-feedback" [ngClass]="{'has-success': myForm.controls['display_name'].valid,
+                                    'has-error': myForm.controls['display_name'].invalid && (myForm.controls['display_name'].touched || myForm.controls['display_name'].dirty)}">
+                                    <label>Display Name:</label>
+                                    <input type="text" formControlName="display_name" class="form-control" id="input-display_name"
+                                           class="form-control" placeholder="Nombre Completo"
+                                           [class.form-control-danger]="myForm.controls['display_name'].invalid && myForm.controls['display_name'].touched" autofocus>
+                                    <small class="form-text error" *ngIf="myForm.controls['display_name'].hasError('required') && (myForm.controls['display_name'].touched || myForm.controls['display_name'].dirty)">
+                                      Rol es requerido!
+                                    </small>
+                                    <small
+                                      class="form-text error"
+                                      *ngIf="myForm.controls['display_name'].hasError('minlength') && myForm.controls['display_name'].touched">
+                                      Rol requiere al menos 4 caracteres de longitud.
+                                    </small>
+                                    <small
+                                      class="form-text error"
+                                      *ngIf="myForm.controls['display_name'].hasError('maxlength') && myForm.controls['display_name'].touched">
+                                      Rol no puede exceder 20 caracteres.
+                                    </small>
+                                </div>      
+
+                                 <div class="form-group has-feedback">
+                                    <label>Description:</label>
+                                    <input type="text" formControlName="description" class="form-control" id="input-description"
+                                           class="form-control" placeholder="Nombre Completo">
+                                </div>                               
+                        </div>
+                      </div>
+                    </div>
+            
+
+                <div class="modal-footer">
+                  <button type="submit" class="btn btn-hero-success">
+                   Guardar
+                  </button>  
+                </div>
+         </form>
+
+    </div>
+  </div>
+</div>
+<div id="myModalEdit" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+         <div class="modal-header">
+          <span>Editar Rol</span>
+          <button  type="button" class="close" aria-label="Close" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form [formGroup]="editForm" (submit)="post(editForm.value)" novalidate>
+                <div class="modal-body">
+                  <div class="row">
+                    <div class="col-md-4">
+                      <div class="box box-solid">
+                      </div>
+                      <div class="box box-solid">
+                        <div class="box-header with-border">
+                          <h4 class="box-title">PERMISOS</h4>
+                        
+                        </div>
+                        <div class="box-body no-padding">
+                          <ul class="nav nav-pills nav-stacked">
+                            <label *ngFor="let permission of dataPermission">
+                        
+                                <li style="color: black">
+                                  <i style="margin-left: 10px"></i>
+                                  <input type="checkbox"  (change)="onChangeEdit(permission.id, $event.target.checked)"/>
+                                  {{permission.name}}
+                                </li>
+
+                            </label>
+                          </ul>
+                        </div>
+                        <!-- /.box-body -->
+                      </div>
+                    </div>
+                    <div class="col-md-8">
+                                <div class="form-group has-feedback" [ngClass]="{'has-success': editForm.controls['name'].valid,
+                                    'has-error': editForm.controls['name'].invalid && (editForm.controls['name'].touched || editForm.controls['name'].dirty)}">
+                                    <label>Nuevo Rol:</label>
+                                    <input type="text" formControlName="name" class="form-control" id="input-name"
+                                           class="form-control" placeholder="Nombre Completo"
+                                           [class.form-control-danger]="editForm.controls['name'].invalid && editForm.controls['name'].touched" autofocus>
+                                    <small class="form-text error" *ngIf="editForm.controls['name'].hasError('required') && (editForm.controls['name'].touched || editForm.controls['name'].dirty)">
+                                      Rol es requerido!
+                                    </small>
+                                    <small
+                                      class="form-text error"
+                                      *ngIf="editForm.controls['name'].hasError('minlength') && editForm.controls['name'].touched">
+                                      Rol requiere al menos 4 caracteres de longitud.
+                                    </small>
+                                    <small
+                                      class="form-text error"
+                                      *ngIf="editForm.controls['name'].hasError('maxlength') && editForm.controls['name'].touched">
+                                      Rol no puede exceder 15 caracteres.
+                                    </small>
+                                </div>  
+
+                                 <div class="form-group has-feedback" [ngClass]="{'has-success': editForm.controls['display_name'].valid,
+                                    'has-error': editForm.controls['display_name'].invalid && (editForm.controls['display_name'].touched || editForm.controls['display_name'].dirty)}">
+                                    <label>Display Name:</label>
+                                    <input type="text" formControlName="display_name" class="form-control" id="input-display_name"
+                                           class="form-control" placeholder="Nombre Completo"
+                                           [class.form-control-danger]="editForm.controls['display_name'].invalid && editForm.controls['display_name'].touched" autofocus>
+                                    <small class="form-text error" *ngIf="editForm.controls['display_name'].hasError('required') && (editForm.controls['display_name'].touched || editForm.controls['display_name'].dirty)">
+                                      Rol es requerido!
+                                    </small>
+                                    <small
+                                      class="form-text error"
+                                      *ngIf="editForm.controls['display_name'].hasError('minlength') && editForm.controls['display_name'].touched">
+                                      Rol requiere al menos 4 caracteres de longitud.
+                                    </small>
+                                    <small
+                                      class="form-text error"
+                                      *ngIf="editForm.controls['display_name'].hasError('maxlength') && editForm.controls['display_name'].touched">
+                                      Rol no puede exceder 20 caracteres.
+                                    </small>
+                                </div>      
+
+                                 <div class="form-group has-feedback">
+                                    <label>Description:</label>
+                                    <input type="text" formControlName="description" class="form-control" id="input-description"
+                                           class="form-control" placeholder="Nombre Completo">
+                                </div>                               
+                        </div>
+                      </div>
+                    </div>
+            
+                <div class="modal-footer">
+                  <button type="submit" class="btn btn-hero-success">
+                   Guardar
+                  </button>  
+                </div>
+         </form>
+
+    </div>
+  </div>
+</div>

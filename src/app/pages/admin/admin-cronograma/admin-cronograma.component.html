@@ -1,0 +1,520 @@
+<nb-card>
+  <nb-card-header>
+    <div class="box-header with-border">
+      Lista Cronograma
+      <div class="box-tools pull-right">
+        <a data-toggle="modal" data-target="#myModal"  class="btn btn-block btn-success btn-xs"><i class="fa fa-plus"></i> Nuevo Cronograma</a>
+      </div>
+    </div>
+  </nb-card-header>
+
+  <nb-card-body>
+    <toaster-container [toasterconfig]="config"></toaster-container>
+    <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped row-border hover">
+      <thead>
+      <tr>
+        <th><b>N</b></th>
+        <th>
+          <b>Versión</b>
+        </th>
+        <th>
+          <b>Fecha</b>
+        </th>
+        <th>
+          <b>Programa A.</b>
+        </th>
+        <th><b>Acciones</b>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let item of data; let i= index">
+        <td><b>{{i+1}}</b></td>
+        <td><b>V{{item.version}}</b></td>
+        <td><b>{{item.fecha}}</b></td>
+        <td><b>{{item.programa_academico.nombre}}</b></td>
+        <td>
+        <!--  <button (click)="remove(item)" data-toggle="confirmation" class="btn btn-danger btn-sm"><span class="fa fa-trash"></span></button> -->
+          <button type="button" (click)="show(item)" data-toggle="modal" data-target="#myModalEdit" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i></button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </nb-card-body>
+</nb-card>
+
+<div id="myModal" class="modal fade" role="dialog" data-backdrop="static">
+  <div class="row">
+    <div class="col-lg-6">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <span>Nuevo Cronograma</span>
+            <button  type="button" class="close" aria-label="Close" data-dismiss="modal">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <form [formGroup]="myForm" (submit)="anadir(myForm.value)" novalidate>
+            <div class="modal-body">
+
+              <div class="row full-name-inputs">
+                <div class="col-sm-6 form-group" [ngClass]="{'has-success': myForm.controls['programa_academico_id'].valid,
+                'has-error': myForm.controls['programa_academico_id'].invalid &&
+                (myForm.controls['programa_academico_id'].touched || myForm.controls['programa_academico_id'].dirty)}">
+                  <ng-select [items]="dataProgramAcademicActive"
+                             [class.form-control-danger]="myForm.controls['programa_academico_id'].invalid &&
+                             myForm.controls['programa_academico_id'].touched"
+                             formControlName="programa_academico_id"
+                             bindLabel="nombre"
+                             bindValue="id"
+                             placeholder="Seleccionar Programa Academico"
+                             (add)="programModule($event)">
+                    <ng-template ng-option-tmp let-item="item">
+                      {{item.nombre}}
+                    </ng-template>
+                  </ng-select>
+
+                  <small class="form-text error" *ngIf="myForm.controls['programa_academico_id'].hasError('required') && (myForm.controls['programa_academico_id'].touched || myForm.controls['programa_academico_id'].dirty)">
+                    Programa Academico es requerido!
+                  </small>
+                </div>
+                <div class="col-sm-6 form-group" [ngClass]="{'has-success': myForm.controls['modulo_id'].valid,
+                                      'has-error': myForm.controls['modulo_id'].invalid && (myForm.controls['modulo_id'].touched || myForm.controls['modulo_id'].dirty)}">
+                  <ng-select [items]="dataProgramModule" [class.form-control-danger]="myForm.controls['modulo_id'].invalid && myForm.controls['modulo_id'].touched"
+                             formControlName="modulo_id"
+                             bindLabel="nombremodulo"
+                             bindValue="id"
+                             [loading]="Cargandodatos"
+                             placeholder="Seleccionar Modulo">
+                  </ng-select>
+                  <small class="form-text error" *ngIf="myForm.controls['modulo_id'].hasError('required') && (myForm.controls['modulo_id'].touched || myForm.controls['modulo_id'].dirty)">
+                    Modulo es requerido!
+                  </small>
+                </div>
+              </div>
+
+              <div class="row full-name-inputs">
+              <!--  <div class="col-sm-6 form-group" [ngClass]="{'has-success': myForm.controls['duracion_dc'].valid,
+                                      'has-error': myForm.controls['duracion_dc'].invalid && (myForm.controls['duracion_dc'].touched || myForm.controls['duracion_dc'].dirty)}">
+                  <label>Horas Academicas</label>
+                  <input type="text" formControlName="duracion_dc" class="form-control" id="input-duracion" placeholder="Introduzca horas academicas"
+                         [class.form-control-danger]="myForm.controls['duracion_dc'].invalid && myForm.controls['duracion_dc'].touched" autofocus>
+                  <small class="form-text error" *ngIf="myForm.controls['duracion_dc'].hasError('required') && (myForm.controls['duracion_dc'].touched || myForm.controls['duracion_dc'].dirty)">
+                    Duracion es requerido!
+                  </small>
+                </div> -->
+                <div class="col-sm-3 form-group" [ngClass]="{'has-success': myForm.controls['version'].valid,
+                                      'has-error': myForm.controls['version'].invalid && (myForm.controls['version'].touched || myForm.controls['version'].dirty)}">
+                  <label>Versión</label>
+                  <input type="text" formControlName="version" class="form-control" id="input-nombre" placeholder="Versión"
+                         [class.form-control-danger]="myForm.controls['version'].invalid && myForm.controls['version'].touched" disabled>
+                  <small class="form-text error" *ngIf="myForm.controls['version'].hasError('required') && (myForm.controls['version'].touched || myForm.controls['version'].dirty)">
+                    Version es requerido!
+                  </small>
+                  <small
+                    class="form-text error"
+                    *ngIf="myForm.controls['version'].hasError('maxlength') && myForm.controls['version'].touched">
+                    Version no puede exceder 4 caracteres.
+                  </small>
+                </div>
+
+                <div class="col-sm-6 form-group" [ngClass]="{'has-success': myForm.controls['fecha'].valid,
+                                      'has-error': myForm.controls['fecha'].invalid && (myForm.controls['fecha'].touched || myForm.controls['fecha'].dirty)}">
+                  <label>Fecha</label>
+                  <input type="date" formControlName="fecha" class="form-control" id="input-fechaNac" placeholder="Seleccione fecha de nacimiento"
+                         [class.form-control-danger]="myForm.controls['fecha'].invalid && myForm.controls['fecha'].touched" autofocus>
+                  <small class="form-text error" *ngIf="myForm.controls['fecha'].hasError('required') && (myForm.controls['fecha'].touched || myForm.controls['fecha'].dirty)">
+                    Fecha es requerido!
+                  </small>
+                </div>
+                <div class="col-sm-3 form-group" [ngClass]="{'has-success': myForm.controls['grupo'].valid,
+                                      'has-error': myForm.controls['grupo'].invalid && (myForm.controls['grupo'].touched || myForm.controls['grupo'].dirty)}">
+                  <ng-select [items]="grupo" [class.form-control-danger]="myForm.controls['grupo'].invalid && myForm.controls['grupo'].touched"
+                             formControlName="grupo"
+                             bindLabel="nombre"
+                             bindValue="nombre"
+                             placeholder="Grupo">
+                  </ng-select>
+                  <small class="form-text error" *ngIf="myForm.controls['grupo'].hasError('required') && (myForm.controls['grupo'].touched || myForm.controls['grupo'].dirty)">
+                    Grupo es requerido!
+                  </small>
+                </div>
+
+              </div>
+
+              <div class="row full-name-inputs">
+                <div class="col-sm-9 form-group" [ngClass]="{'has-success': myForm.controls['persona_id'].valid,
+                                      'has-error': myForm.controls['persona_id'].invalid && (myForm.controls['persona_id'].touched || myForm.controls['persona_id'].dirty)}">
+                  <ng-select [items]="dataDocente" [class.form-control-danger]="myForm.controls['persona_id'].invalid && myForm.controls['persona_id'].touched"
+                             formControlName="persona_id"
+                             bindLabel="nombres"
+                             bindValue="id"
+                             placeholder="Seleccionar Docente">
+                    <ng-template ng-header-tmp>
+                      Escribe para buscar...
+                    </ng-template>
+                    <ng-template ng-label-tmp let-item="item">
+                      {{item.nombres}} {{item.app}} {{item.apm}}
+                    </ng-template>
+                    <ng-template ng-option-tmp let-item="item">
+                      {{item.nombres}} {{item.app}} {{item.apm}}
+                    </ng-template>
+                  </ng-select>
+
+                  <small class="form-text error" *ngIf="myForm.controls['persona_id'].hasError('required') && (myForm.controls['persona_id'].touched || myForm.controls['persona_id'].dirty)">
+                    Docente es requerido!
+                  </small>
+                </div>
+                <div class="col-sm-3 form-group" [ngClass]="{'has-success': myForm.controls['ambiente_id'].valid,
+                                      'has-error': myForm.controls['ambiente_id'].invalid && (myForm.controls['ambiente_id'].touched || myForm.controls['ambiente_id'].dirty)}">
+                  <ng-select [items]="dataAmbiente" [class.form-control-danger]="myForm.controls['ambiente_id'].invalid && myForm.controls['ambiente_id'].touched"
+                             formControlName="ambiente_id"
+                             bindLabel="nombre"
+                             bindValue="id"
+                             placeholder="Ambiente">
+                  </ng-select>
+
+                  <small class="form-text error" *ngIf="myForm.controls['ambiente_id'].hasError('required') && (myForm.controls['ambiente_id'].touched || myForm.controls['ambiente_id'].dirty)">
+                    Ambiente es requerido!
+                  </small>
+                </div>
+              </div>
+
+            </div>
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-hero-success btn-block">
+                Anadir
+              </button>
+            </div>
+          </form>
+
+            <nb-card-body>
+              <div class="text-center"><h6>Programa Academico: {{nombreProgramAcademy}}</h6></div>
+              <div class="text-center"><h6>Version: {{datos.version}}</h6></div>
+              <div class="text-center"><h6>Grupo: {{titleGrupo}}</h6></div>
+              <div  *ngFor="let title of cargarTitulos; let i= index">
+                <nb-card>
+                  <nb-card-body>
+                    <nb-card-header>
+                      <button type="button" class="close pull-right" (click)="eliminarAnadido(title)">
+                        <i class="fa fa-trash"></i>
+                      </button>
+                      <button  type="button" class="close pull-right">
+                        <i class="fa fa-pencil"></i>
+                      </button>
+                      <button  type="button" class="close pull-right">
+                        <i class="fa fa-eye"></i>
+                      </button>
+                    </nb-card-header>
+                    <div class="box-tools">
+                      <div class="pull-left"><b>Modulo:</b> {{title.modulo}}</div><br/>
+                      <div class="pull-left"><b>Docente:</b> {{title.docente}}</div>
+                      <div class="pull-right"><b>Ambiente:</b> {{title.ambiente}}</div>
+                    </div>
+                  </nb-card-body>
+                </nb-card>
+              </div>
+
+              <button type="submit" class="btn btn-hero-success pull-right">
+                  Guardar
+              </button>
+            </nb-card-body>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <!--<span>Registrar Nuevo Personal</span>-->
+            <span>
+              {{ viewDate | calendarDate:(view + 'ViewTitle'):'en' }}
+            </span>
+            <button  type="button" class="close" aria-label="Close" data-dismiss="modal">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+
+          <div class="text-center">
+            <div class="pull-right">
+              <div class="btn-group">
+                <div
+                  class="btn btn-primary"
+                  mwlCalendarPreviousView
+                  [view]="view"
+                  [(viewDate)]="viewDate"
+                  (viewDateChange)="activeDayIsOpen = false">
+                  Anterior
+                </div>
+                <div
+                  class="btn btn-outline-secondary"
+                  mwlCalendarToday
+                  [(viewDate)]="viewDate">
+                  Hoy
+                </div>
+                <div
+                  class="btn btn-primary"
+                  mwlCalendarNextView
+                  [view]="view"
+                  [(viewDate)]="viewDate"
+                  (viewDateChange)="activeDayIsOpen = false">
+                  Siguiente
+                </div>
+              </div>
+            </div>
+            <div class="pull-left">
+              <div class="btn-group">
+                <div
+                  class="btn btn-primary"
+                  (click)="view = 'month'"
+                  [class.active]="view === 'month'">
+                  Mes
+                </div>
+                <div
+                  class="btn btn-primary"
+                  (click)="view = 'week'"
+                  [class.active]="view === 'week'">
+                  Semana
+                </div>
+                <div
+                  class="btn btn-primary"
+                  (click)="view = 'day'"
+                  [class.active]="view === 'day'">
+                  Día
+                </div>
+              </div>
+            </div>
+          </div>
+          <br>
+          <div [ngSwitch]="view">
+            <mwl-calendar-month-view
+              *ngSwitchCase="'month'"
+              [viewDate]="viewDate"
+              [events]="events"
+              [refresh]="refresh"
+              [activeDayIsOpen]="activeDayIsOpen"
+              (dayClicked)="dayClicked($event.day)"
+              (eventTimesChanged)="eventTimesChanged($event)">
+            </mwl-calendar-month-view>
+            <mwl-calendar-week-view
+              *ngSwitchCase="'week'"
+              [viewDate]="viewDate"
+              [events]="events"
+              [refresh]="refresh"
+              (eventTimesChanged)="eventTimesChanged($event)">
+            </mwl-calendar-week-view>
+            <mwl-calendar-day-view
+              *ngSwitchCase="'day'"
+              [viewDate]="viewDate"
+              [events]="events"
+              [refresh]="refresh"
+              (eventTimesChanged)="eventTimesChanged($event)">
+            </mwl-calendar-day-view>
+          </div>
+
+          <br><br><br>
+
+          <h3>
+            Editar eventos
+            <button
+              class="btn btn-primary pull-right"
+              (click)="addEvent()">
+              Añadir nuevo
+            </button>
+            <div class="clearfix"></div>
+          </h3>
+
+          <table class="table table-bordered">
+
+            <thead>
+            <tr>
+              <th>Title</th>
+              <!--<th>Primary color</th>
+              <th>Secondary color</th>-->
+              <th>Empieza a</th>
+              <th>Termina en</th>
+              <th>Eliminar</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr *ngFor="let event of events; let index = index">
+              <td>
+                <input
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="event.title"
+                  (keyup)="refresh.next()">
+              </td>
+              <!-- <td>
+                 <input
+                   type="color"
+                   [(ngModel)]="event.color.primary"
+                   (change)="refresh.next()">
+               </td>
+               <td>
+                 <input
+                   type="color"
+                   [(ngModel)]="event.color.secondary"
+                   (change)="refresh.next()">
+               </td>-->
+              <td>
+                <ngx-admin-time-picker
+                  [(ngModel)]="event.start"
+                  (ngModelChange)="refresh.next()"
+                  placeholder="Not set"
+                  (keyup)="refresh.next()">
+                </ngx-admin-time-picker>
+              </td>
+              <td>
+                <ngx-admin-time-picker
+                  [(ngModel)]="event.end"
+                  (ngModelChange)="refresh.next()"
+                  placeholder="Not set"
+                  (keyup)="refresh.next()">
+                </ngx-admin-time-picker>
+              </td>
+              <td>
+                <button (click)="events.splice(index, 1); refresh.next()" class="btn btn-danger btn-sm"><span class="fa fa-trash"></span></button>
+              </td>
+            </tr>
+            </tbody>
+
+          </table>
+
+          <!--<form [formGroup]="myForm" (submit)="post(myForm.value)" novalidate>
+            <div class="modal-body">
+              <div class="form-group has-feedback" [ngClass]="{'has-success': myForm.controls['duracion'].valid,
+                                        'has-error': myForm.controls['duracion'].invalid && (myForm.controls['duracion'].touched || myForm.controls['duracion'].dirty)}">
+                <label>Duracion</label>
+                <input type="text" formControlName="duracion" class="form-control" id="input-duracion" placeholder="Introduzca duracion"
+                       [class.form-control-danger]="myForm.controls['duracion'].invalid && myForm.controls['duracion'].touched" autofocus>
+                <small class="form-text error" *ngIf="myForm.controls['duracion'].hasError('required') && (myForm.controls['duracion'].touched || myForm.controls['duracion'].dirty)">
+                  Duracion es requerido!
+                </small>
+              </div>
+
+              <div class="form-group has-feedback" [ngClass]="{'has-success': myForm.controls['version'].valid,
+                                        'has-error': myForm.controls['version'].invalid && (myForm.controls['version'].touched || myForm.controls['version'].dirty)}">
+                <label>Version</label>
+                <input type="text" formControlName="version" class="form-control" id="input-nombre" placeholder="Introduzca Usuario"
+                       [class.form-control-danger]="myForm.controls['version'].invalid && myForm.controls['version'].touched" autofocus>
+                <small class="form-text error" *ngIf="myForm.controls['version'].hasError('required') && (myForm.controls['version'].touched || myForm.controls['version'].dirty)">
+                  Version es requerido!
+                </small>
+                <small
+                  class="form-text error"
+                  *ngIf="myForm.controls['version'].hasError('maxlength') && myForm.controls['version'].touched">
+                  Version no puede exceder 4 caracteres.
+                </small>
+              </div>
+
+              <div class="form-group has-feedback" [ngClass]="{'has-success': myForm.controls['fecha'].valid,
+                                        'has-error': myForm.controls['fecha'].invalid && (myForm.controls['fecha'].touched || myForm.controls['fecha'].dirty)}">
+                <label>Fecha</label>
+                <input type="date" formControlName="fecha" class="form-control" id="input-fechaNac" placeholder="Seleccione fecha de nacimiento"
+                       [class.form-control-danger]="myForm.controls['fecha'].invalid && myForm.controls['fecha'].touched" autofocus>
+                <small class="form-text error" *ngIf="myForm.controls['fecha'].hasError('required') && (myForm.controls['fecha'].touched || myForm.controls['fecha'].dirty)">
+                  Fecha es requerido!
+                </small>
+              </div>
+
+              <div class="form-group has-feedback" [ngClass]="{'has-success': myForm.controls['programa_academico_id'].valid,
+                                        'has-error': myForm.controls['programa_academico_id'].invalid && (myForm.controls['programa_academico_id'].touched || myForm.controls['programa_academico_id'].dirty)}">
+                <label>Seleccionar Tipo de Programa Academico</label>
+                <select class="form-control selectpicker" data-live-search="true" formControlName="programa_academico_id"
+                        [class.form-control-danger]="myForm.controls['programa_academico_id'].invalid && myForm.controls['programa_academico_id'].touched">
+                  <option *ngFor="let program of dataProgramAcademicActive" [value]="program.id" data-tokens="program.nombre">
+                    {{program.nombre}}
+                  </option>
+                </select>
+                <small class="form-text error" *ngIf="myForm.controls['programa_academico_id'].hasError('required') && (myForm.controls['programa_academico_id'].touched || myForm.controls['programa_academico_id'].dirty)">
+                  Programa Academico es requerido!
+                </small>
+              </div>
+
+            </div>
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-hero-success">
+                Guardar
+              </button>
+            </div>
+          </form>-->
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<div id="myModalEdit" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span>Modificar Personal</span>
+        <button  type="button" class="close" aria-label="Close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form class="form-horizontal" [formGroup]="editForm" novalidate (submit)="edit(editForm.value)">
+        <div class="modal-body">
+        <!--  <div class="form-group has-feedback" [ngClass]="{'has-success': myForm.controls['duracion_dc'].valid,
+                                    'has-error': myForm.controls['duracion_dc'].invalid && (myForm.controls['duracion_dc'].touched || myForm.controls['duracion_dc'].dirty)}">
+            <label>Duracion</label>
+            <input type="text" formControlName="duracion_dc" class="form-control" id="input-duracion" placeholder="Introduzca duracion"
+                   [class.form-control-danger]="myForm.controls['duracion_dc'].invalid && myForm.controls['duracion_dc'].touched" autofocus>
+            <small class="form-text error" *ngIf="myForm.controls['duracion_dc'].hasError('required') && (myForm.controls['duracion_dc'].touched || myForm.controls['duracion_dc'].dirty)">
+              Duracion es requerido!
+            </small>
+          </div> -->
+
+          <div class="form-group has-feedback" [ngClass]="{'has-success': myForm.controls['version'].valid,
+                                    'has-error': myForm.controls['version'].invalid && (myForm.controls['version'].touched || myForm.controls['version'].dirty)}">
+            <label>Version</label>
+            <input type="text" formControlName="version" class="form-control" id="input-nombre" placeholder="Introduzca Usuario"
+                   [class.form-control-danger]="myForm.controls['version'].invalid && myForm.controls['version'].touched" autofocus>
+            <small class="form-text error" *ngIf="myForm.controls['version'].hasError('required') && (myForm.controls['version'].touched || myForm.controls['version'].dirty)">
+              Version es requerido!
+            </small>
+            <small
+              class="form-text error"
+              *ngIf="myForm.controls['version'].hasError('maxlength') && myForm.controls['version'].touched">
+              Version no puede exceder 4 caracteres.
+            </small>
+
+
+          </div>
+
+          <div class="form-group has-feedback" [ngClass]="{'has-success': myForm.controls['fecha'].valid,
+                                    'has-error': myForm.controls['fecha'].invalid && (myForm.controls['fecha'].touched || myForm.controls['fecha'].dirty)}">
+            <label>Fecha</label>
+            <input type="date" formControlName="fecha" class="form-control" id="input-fechaNac" placeholder="Seleccione fecha de nacimiento"
+                   [class.form-control-danger]="myForm.controls['fecha'].invalid && myForm.controls['fecha'].touched" autofocus>
+            <small class="form-text error" *ngIf="myForm.controls['fecha'].hasError('required') && (myForm.controls['fecha'].touched || myForm.controls['fecha'].dirty)">
+              Fecha es requerido!
+            </small>
+          </div>
+
+          <div class="form-group has-feedback" [ngClass]="{'has-success': myForm.controls['programa_academico_id'].valid,
+                                    'has-error': myForm.controls['programa_academico_id'].invalid && (myForm.controls['programa_academico_id'].touched || myForm.controls['programa_academico_id'].dirty)}">
+            <label>Seleccionar Tipo de Programa Academico</label>
+            <select class="form-control selectpicker" data-live-search="true" formControlName="programa_academico_id"
+                    [class.form-control-danger]="myForm.controls['programa_academico_id'].invalid && myForm.controls['programa_academico_id'].touched">
+              <option *ngFor="let program of dataProgramAcademicActive" [value]="program.id" data-tokens="program.nombre">
+                {{program.nombre}}
+              </option>
+            </select>
+            <small class="form-text error" *ngIf="myForm.controls['programa_academico_id'].hasError('required') && (myForm.controls['programa_academico_id'].touched || myForm.controls['programa_academico_id'].dirty)">
+              Programa Academico es requerido!
+            </small>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success"> Editar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

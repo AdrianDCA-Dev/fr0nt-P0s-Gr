@@ -1,0 +1,675 @@
+<nb-card>
+  <nb-card-header>
+    <div class="box-header with-border">
+      Lista Usuario
+      <div class="box-tools pull-right">
+        <a data-toggle="modal" data-target="#myModal"  class="btn btn-block btn-success btn-xs"><i class="fa fa-plus"></i> Nuevo Usuario</a>
+      </div>
+    </div>
+  </nb-card-header>
+
+  <nb-card-body>
+  <!--  <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-responsive no-padding table-striped row-border hover"> -->
+    <toaster-container [toasterconfig]="config"></toaster-container>
+      <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped row-border hover">
+        <thead>
+        <tr>
+          <th><b>N</b></th>
+          <th>
+            <b>DNI</b>
+          </th>
+          <th>
+            <b>Nombre</b>
+          </th>
+          <th>
+            <b>Apellido P</b>
+          </th>
+          <th>
+            <b>Apellido M</b>
+          </th>
+          <th>
+            <b>Sexo</b>
+          </th>
+          <th>
+            <b>Roles</b>
+          </th>
+          <th>
+            <b>Direccion</b>
+          </th>
+          <th>
+            <b>Fono</b>
+          </th>
+          <th>
+            <b>Usuario</b>
+          </th>
+          <th>
+            <b>Email</b>
+          </th>
+          <th><b>Acciones</b>
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let item of data; let i= index">
+          <td><b>{{i+1}}</b></td>
+          <td><b>{{item.persona.dni}}</b></td>
+          <td><b>{{item.persona.nombres}}</b></td>
+          <td><b>{{item.persona.app}}</b></td>
+          <td><b>{{item.persona.apm}}</b></td>
+          <td><b>{{item.persona.sexo}}</b></td>
+          <td>
+            <div *ngFor="let items of item.roles">
+              <b>{{items.name}}</b>
+            </div>
+          </td>
+          <td><b>{{item.persona.direccion}}</b></td>
+          <td><b>{{item.persona.fono}}</b></td>
+          <td><b>{{item.name}}</b></td>
+          <td><b>{{item.email}}</b></td>
+          <td>
+<!--            <button (click)="remove(item)" data-toggle="confirmation" class="btn btn-danger btn-sm"><span class="fa fa-trash"></span></button>-->
+            <button type="button" (click)="show(item)" data-toggle="modal" data-target="#myModalEdit" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i></button>
+          </td>
+        </tr>
+        </tbody>
+    </table>
+  </nb-card-body>
+</nb-card>
+<div id="myModal" class="modal fade" role="dialog" data-backdrop="static">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span>Registrar Nuevo Usuario</span>
+        <button  type="button" class="close" aria-label="Close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form [formGroup]="myForm" (submit)="post(myForm.value)" novalidate>
+        <div class="modal-body">
+          <nb-card>
+            <nb-card-header>Datos Personales</nb-card-header>
+            <nb-card-body>
+              <div class="row full-name-inputs">
+                <div class="col-sm-6 form-group" [ngClass]="{'has-success': myForm.controls['dni'].valid,
+                                    'has-error': myForm.controls['dni'].invalid && (myForm.controls['dni'].touched || myForm.controls['dni'].dirty)}">
+                  <label>DNI</label>
+                  <input type="text" formControlName="dni" class="form-control" id="input-dni" placeholder="DNI Completo"
+                         [class.form-control-danger]="myForm.controls['dni'].invalid && myForm.controls['dni'].touched" autofocus>
+                  <small class="form-text error" *ngIf="myForm.controls['dni'].hasError('required') && (myForm.controls['dni'].touched || myForm.controls['dni'].dirty)">
+                    DNI es requerido!
+                  </small>
+                  <small
+                    class="form-text error"
+                    *ngIf="myForm.controls['dni'].hasError('minlength') && myForm.controls['dni'].touched">
+                    DNI requiere al menos 7 caracteres de longitud.
+                  </small>
+                  <small
+                    class="form-text error"
+                    *ngIf="myForm.controls['dni'].hasError('maxlength') && myForm.controls['dni'].touched">
+                    DNI no puede exceder 15 caracteres.
+                  </small>
+                  <small class="form-text error"
+                         *ngIf="myForm.controls['dni'].hasError('pattern') && (myForm.controls['dni'].touched ||
+                   myForm.controls['dni'].dirty)">
+                    Formato valido Ej: 00000000-aaa!
+                  </small>
+                </div>
+
+                <div  class="col-sm-6 form-group" [ngClass]="{'has-success': myForm.controls['nombres'].valid,
+                                    'has-error': myForm.controls['nombres'].invalid && (myForm.controls['nombres'].touched || myForm.controls['nombres'].dirty)}">
+                  <label>Nombres:</label>
+                  <input type="text" formControlName="nombres" class="form-control" id="input-nombres" placeholder="Nombre Completo"
+                         [class.form-control-danger]="myForm.controls['nombres'].invalid && myForm.controls['nombres'].touched" autofocus>
+                  <small class="form-text error" *ngIf="myForm.controls['nombres'].hasError('required') && (myForm.controls['nombres'].touched || myForm.controls['nombres'].dirty)">
+                    Nombre es requerido!
+                  </small>
+                  <small
+                    class="form-text error"
+                    *ngIf="myForm.controls['nombres'].hasError('maxlength') && myForm.controls['nombres'].touched">
+                    Nombre no puede exceder los 25 caracteres.
+                  </small>
+                </div>
+
+              </div>
+              <div class="row full-name-inputs">
+                <div class="col-sm-6 form-group" [ngClass]="{'has-success': myForm.controls['app'].valid,
+                                    'has-error': myForm.controls['app'].invalid && (myForm.controls['app'].touched || myForm.controls['app'].dirty)}">
+                  <label>Apellido Paterno:</label>
+                  <input type="text" formControlName="app" class="form-control" id="input-app" placeholder="Apellido Paterno Completo"
+                         [class.form-control-danger]="myForm.controls['app'].invalid && myForm.controls['app'].touched" autofocus>
+                  <small class="form-text error" *ngIf="myForm.controls['app'].hasError('required') && (myForm.controls['app'].touched || myForm.controls['app'].dirty)">
+                    Apellido Paterno es requerido!
+                  </small>
+                  <small
+                    class="form-text error"
+                    *ngIf="myForm.controls['app'].hasError('maxlength') && myForm.controls['app'].touched">
+                    Apellido Paterno no puede exceder los 25 caracteres.
+                  </small>
+                </div>
+                <div class="col-sm-6 form-group" [ngClass]="{'has-success': myForm.controls['apm'].valid,
+                                    'has-error': myForm.controls['apm'].invalid && (myForm.controls['apm'].touched || myForm.controls['apm'].dirty)}">
+                  <label>Apellido Materno:</label>
+                  <input type="text" formControlName="apm" class="form-control" id="input-apm" placeholder="Apellido Materno Completo"
+                         [class.form-control-danger]="myForm.controls['apm'].invalid && myForm.controls['apm'].touched" autofocus>
+                  <small class="form-text error" *ngIf="myForm.controls['apm'].hasError('required') && (myForm.controls['apm'].touched || myForm.controls['apm'].dirty)">
+                    Apellido Materno es requerido!
+                  </small>
+                  <small
+                    class="form-text error"
+                    *ngIf="myForm.controls['apm'].hasError('maxlength') && myForm.controls['apm'].touched">
+                    Apeliido Materno no puede exceder los 25 caracteres.
+                  </small>
+                </div>
+              </div>
+              <div class="row full-name-inputs">
+                <div class="col-sm-6 form-group " [ngClass]="{'has-success': myForm.controls['sexo'].valid,
+                                    'has-error': myForm.controls['sexo'].invalid && (myForm.controls['sexo'].touched || myForm.controls['sexo'].dirty)}">
+                  <label>Sexo:</label>
+
+                  <div class="containerss">
+                    <div class="form-check">
+                      <input class="form-check-input" formControlName="sexo" name="sexo" type="radio" value="Masculino" checked="checked"
+                             [class.form-control-danger]="myForm.controls['sexo'].invalid && myForm.controls['sexo'].touched" autofocus>
+                      <label class="form-check-label" for="radio100">Masculino</label>
+                    </div>
+
+                    <div class="form-check">
+                      <input class="form-check-input" formControlName="sexo" name="sexo" type="radio" value="Femenino"
+                             [class.form-control-danger]="myForm.controls['sexo'].invalid && myForm.controls['sexo'].touched" autofocus>
+                      <label class="form-check-label" for="radio101">Femenino</label>
+                    </div>
+                  </div>
+                  <small class="form-text error" *ngIf="myForm.controls['sexo'].hasError('required') && (myForm.controls['sexo'].touched || myForm.controls['sexo'].dirty)">
+                    Sexo es requerido!
+                  </small>
+                </div>
+                <div class="col-sm-6 form-group" [ngClass]="{'has-success': myForm.controls['email'].valid,
+                                    'has-error': myForm.controls['email'].invalid && (myForm.controls['email'].touched || myForm.controls['email'].dirty)}">
+                  <label>Email</label>
+                  <input type="text" formControlName="email" class="form-control" id="input-email" placeholder="Introduzca Email"
+                         [class.form-control-danger]="myForm.controls['email'].invalid && myForm.controls['email'].touched" autofocus>
+                  <small class="form-text error" *ngIf="myForm.controls['email'].hasError('required') && (myForm.controls['email'].touched || myForm.controls['email'].dirty)">
+                    ¡Correo electronico es requerido!
+                  </small>
+                  <small
+                    class="form-text error"
+                    *ngIf="myForm.controls['email'].hasError('email') && myForm.controls['email'].touched">
+                    ¡El correo electrónico debe ser el verdadero!
+                  </small>
+                </div>
+              </div>
+
+              <div class="row full-name-inputs">
+                <div class="col-sm-5 form-group" [ngClass]="{'has-success': myForm.controls['titulo'].valid,
+                                    'has-error': myForm.controls['titulo'].invalid && (myForm.controls['titulo'].touched || myForm.controls['titulo'].dirty)}">
+                  <label>Titulo:</label>
+                  <input type="text" formControlName="titulo" class="form-control"
+                         placeholder="Titulo"
+                         [class.form-control-danger]="myForm.controls['titulo'].invalid && myForm.controls['titulo'].touched">
+                </div>
+                <div class="col-sm-5 form-group" [ngClass]="{'has-success': myForm.controls['fecEmision'].valid,
+                                    'has-error': myForm.controls['fecEmision'].invalid && (myForm.controls['fecEmision'].touched || myForm.controls['fecEmision'].dirty)}">
+                  <label>Fecha Emisión:</label>
+                  <input type="date" formControlName="fecEmision" class="form-control" placeholder="Fecha emisíon"
+                         [class.form-control-danger]="myForm.controls['fecEmision'].invalid && myForm.controls['fecEmision'].touched">
+                </div>
+                <div class="col-sm-2 form-group">
+                  <label>Añadir Mas</label>
+                    <a class="btn btn-block btn-success btn-xs" data-toggle="modal" data-target="#myModalMas" ><i class="fa fa-plus"></i></a>
+                </div>
+              </div>
+
+              <div class="form-group has-feedback" [ngClass]="{'has-success': myForm.controls['direccion'].valid,
+                                    'has-error': myForm.controls['direccion'].invalid && (myForm.controls['direccion'].touched || myForm.controls['direccion'].dirty)}">
+                <label>Direccion:</label>
+                <input type="text" formControlName="direccion" class="form-control" id="input-direccion" placeholder="Escriba su direccion"
+                       [class.form-control-danger]="myForm.controls['direccion'].invalid && myForm.controls['direccion'].touched" autofocus>
+                <small class="form-text error" *ngIf="myForm.controls['direccion'].hasError('required') && (myForm.controls['direccion'].touched || myForm.controls['direccion'].dirty)">
+                  Direccion es requerido!
+                </small>
+              </div>
+              <div class="row full-name-inputs">
+                <div class="col-sm-6 form-group" [ngClass]="{'has-success': myForm.controls['fechaNac'].valid,
+                                    'has-error': myForm.controls['fechaNac'].invalid && (myForm.controls['fechaNac'].touched || myForm.controls['fechaNac'].dirty)}">
+                  <label>Fecha de Nacimiento:</label>
+                  <input type="date" formControlName="fechaNac" class="form-control" id="input-fechaNac" placeholder="Seleccione fecha de nacimiento"
+                         [class.form-control-danger]="myForm.controls['fechaNac'].invalid && myForm.controls['fechaNac'].touched" autofocus>
+                  <small class="form-text error" *ngIf="myForm.controls['fechaNac'].hasError('required') && (myForm.controls['fechaNac'].touched || myForm.controls['fechaNac'].dirty)">
+                    Fecha de nacimiento es requerido!
+                  </small>
+                </div>
+                <div class="col-sm-6 form-group" [ngClass]="{'has-success': myForm.controls['fono'].valid,
+                                    'has-error': myForm.controls['fono'].invalid && (myForm.controls['fono'].touched || myForm.controls['fono'].dirty)}">
+                  <label>Fono:</label>
+                  <input type="text" formControlName="fono" class="form-control" id="input-fono" placeholder="Escriba Numero de Fono"
+                         [class.form-control-danger]="myForm.controls['fono'].invalid && myForm.controls['fono'].touched" autofocus>
+                  <small class="form-text error" *ngIf="myForm.controls['fono'].hasError('required') && (myForm.controls['fono'].touched || myForm.controls['fono'].dirty)">
+                    Fono es requerido!
+                  </small>
+                </div>
+                <div class="col-sm-12 form-group" [ngClass]="{'has-success': myForm.controls['role'].valid,
+                                    'has-error': myForm.controls['role'].invalid && (myForm.controls['role'].touched || myForm.controls['role'].dirty)}">
+                  <!-- <label>Tipo Usuario</label>-->
+                  <ng-select [items]="dataRole"
+                             [class.form-control-danger]="myForm.controls['role'].invalid && myForm.controls['role'].touched"
+                             formControlName="role"
+                             bindLabel="name"
+                             bindValue="id"
+                             [multiple]="true"
+                             [closeOnSelect]="false"
+                             placeholder="Seleccione Tipo Usuario">
+                  </ng-select>
+                  <small class="form-text error" *ngIf="myForm.controls['role'].hasError('required') && (myForm.controls['role'].touched || myForm.controls['role'].dirty)">
+                    Tipo de Usuario es requerido!
+                  </small>
+                </div>
+              </div>
+            </nb-card-body>
+          </nb-card>
+
+         <!-- <nb-card>
+            <nb-card-header>Datos Usuario</nb-card-header>
+            <nb-card-body>
+              <div class="row full-name-inputs">
+                <div class="col-sm-6 form-group" [ngClass]="{'has-success': myForm.controls['name'].valid,
+                                    'has-error': myForm.controls['name'].invalid && (myForm.controls['name'].touched || myForm.controls['name'].dirty)}">
+                  <label>Usuario</label>
+                  <input type="text" formControlName="name" class="form-control" id="input-name"
+                         class="form-control" placeholder="Introduzca Usuario"
+                         [class.form-control-danger]="myForm.controls['name'].invalid && myForm.controls['name'].touched" autofocus>
+                  <small class="form-text error" *ngIf="myForm.controls['name'].hasError('required') && (myForm.controls['name'].touched || myForm.controls['name'].dirty)">
+                    Usuario es requerido!
+                  </small>
+                  <small
+                    class="form-text error"
+                    *ngIf="myForm.controls['name'].hasError('minlength') && myForm.controls['name'].touched">
+                    Usuario requiere al menos 4 caracteres de longitud.
+                  </small>
+                  <small
+                    class="form-text error"
+                    *ngIf="myForm.controls['name'].hasError('maxlength') && myForm.controls['name'].touched">
+                    Usuario no puede exceder 50 caracteres.
+                  </small>
+                </div>
+
+
+              </div>
+
+              <div class="row full-name-inputs">
+                <div class="col-sm-6 form-group" [ngClass]="{'has-success': myForm.controls['password'].valid,
+                                    'has-error': myForm.controls['password'].invalid && (myForm.controls['password'].touched || myForm.controls['password'].dirty)}">
+                  <label>Contraseña</label>
+                  <input type="password" formControlName="password" class="form-control" id="input-password" placeholder="Introduzca contraseña"
+                         [class.form-control-danger]="myForm.controls['password'].invalid && myForm.controls['password'].touched" autofocus>
+                  <small class="form-text error" *ngIf="myForm.controls['password'].hasError('required') && (myForm.controls['password'].touched || myForm.controls['password'].dirty)">
+                    ¡Se requiere contraseña!
+                  </small>
+                  <small
+                    class="form-text error"
+                    *ngIf="myForm.controls['password'].hasError('minlength') && myForm.controls['password'].touched">
+                    Contraseña requiere al menos 8 caracteres de longitud.
+                  </small>
+                  <small
+                    class="form-text error"
+                    *ngIf="myForm.controls['password'].hasError('maxlength') && myForm.controls['password'].touched">
+                    Contraseña no puede exceder 60 caracteres.
+                  </small>
+                </div>
+                <div class="col-sm-6 form-group" [ngClass]="{'has-success': myForm.controls['password_confirmation'].valid,
+                                    'has-error': myForm.controls['password_confirmation'].invalid && (myForm.controls['password_confirmation'].touched || myForm.controls['password_confirmation'].dirty)}">
+                  <label>Repite la contraseña</label>
+                  <input type="password" formControlName="password_confirmation" class="form-control" id="input-password_confirmation" placeholder="Confirmar contraseña"
+                         [class.form-control-danger]="(myForm.controls['password_confirmation'].invalid || myForm.controls['password'].value != myForm.controls['password_confirmation'].value) && myForm.controls['password_confirmation'].touched">
+                  <small class="form-text error" *ngIf="myForm.controls['password_confirmation'].hasError('required') && (myForm.controls['password_confirmation'].touched || myForm.controls['password_confirmation'].dirty)">
+                    ¡Se requiere confirmación de contraseña!
+                  </small>
+                  <small
+                    class="form-text error"
+                    *ngIf="myForm.controls['password_confirmation'].touched && myForm.controls['password'].value != myForm.controls['password_confirmation'].value && !myForm.controls['password_confirmation'].hasError('required')">
+                    La contraseña no coincide con la contraseña de confirmación.'
+                  </small>
+                </div>
+              </div>
+            </nb-card-body>
+          </nb-card>-->
+        </div>
+        <div class="modal-footer">
+          <button [disabled]="((myForm.controls['dni'].invalid) || (myForm.controls['nombres'].invalid) || (myForm.controls['app'].invalid) ||
+          (myForm.controls['apm'].invalid) || (myForm.controls['sexo'].invalid) || (myForm.controls['email'].invalid) ||
+          (myForm.controls['direccion'].invalid) || (myForm.controls['fechaNac'].invalid) || (myForm.controls['fono'].invalid) ||
+          (myForm.controls['role'].invalid))" type="submit" class="btn btn-hero-success">
+            Guardar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<div id="myModalEdit" class="modal fade" role="dialog" data-backdrop="static">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span>Modificar Usuario</span>
+        <button  type="button" class="close" aria-label="Close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form class="form-horizontal" [formGroup]="editForm" novalidate (submit)="edit(editForm.value)">
+        <div class="modal-body">
+          <nb-card>
+            <nb-card-header>Datos Personales</nb-card-header>
+            <nb-card-body>
+              <div class="row full-name-inputs">
+                <div class="col-sm-6 form-group" [ngClass]="{'has-success': editForm.controls['dni'].valid,
+                                    'has-error': editForm.controls['dni'].invalid && (editForm.controls['dni'].touched || editForm.controls['dni'].dirty)}">
+                  <label>DNI</label>
+                  <input type="text" formControlName="dni" class="form-control" id="input-dni" placeholder="DNI Completo"
+                         [class.form-control-danger]="editForm.controls['dni'].invalid && editForm.controls['dni'].touched" autofocus>
+                  <small class="form-text error" *ngIf="editForm.controls['dni'].hasError('required') && (editForm.controls['dni'].touched || editForm.controls['dni'].dirty)">
+                    DNI es requerido!
+                  </small>
+                  <small
+                    class="form-text error"
+                    *ngIf="editForm.controls['dni'].hasError('minlength') && editForm.controls['dni'].touched">
+                    DNI requiere al menos 7 caracteres de longitud.
+                  </small>
+                  <small
+                    class="form-text error"
+                    *ngIf="editForm.controls['dni'].hasError('maxlength') && editForm.controls['dni'].touched">
+                    DNI no puede exceder 11 caracteres.
+                  </small>
+                </div>
+
+                <div  class="col-sm-6 form-group" [ngClass]="{'has-success': editForm.controls['nombres'].valid,
+                                    'has-error': editForm.controls['nombres'].invalid && (editForm.controls['nombres'].touched || editForm.controls['nombres'].dirty)}">
+                  <label>Nombres:</label>
+                  <input type="text" formControlName="nombres" class="form-control" id="input-nombres" placeholder="Nombre Completo"
+                         [class.form-control-danger]="editForm.controls['nombres'].invalid && editForm.controls['nombres'].touched" autofocus>
+                  <small class="form-text error" *ngIf="editForm.controls['nombres'].hasError('required') && (editForm.controls['nombres'].touched || editForm.controls['nombres'].dirty)">
+                    Nombre es requerido!
+                  </small>
+                  <small
+                    class="form-text error"
+                    *ngIf="editForm.controls['nombres'].hasError('maxlength') && editForm.controls['nombres'].touched">
+                    Nombre no puede exceder los 25 caracteres.
+                  </small>
+                </div>
+
+              </div>
+              <div class="row full-name-inputs">
+                <div class="col-sm-6 form-group" [ngClass]="{'has-success': editForm.controls['app'].valid,
+                                    'has-error': editForm.controls['app'].invalid && (editForm.controls['app'].touched || editForm.controls['app'].dirty)}">
+                  <label>Apellido Paterno:</label>
+                  <input type="text" formControlName="app" class="form-control" id="input-app" placeholder="Apellido Paterno Completo"
+                         [class.form-control-danger]="editForm.controls['app'].invalid && editForm.controls['app'].touched" autofocus>
+                  <small class="form-text error" *ngIf="editForm.controls['app'].hasError('required') && (editForm.controls['app'].touched || editForm.controls['app'].dirty)">
+                    Apellido Paterno es requerido!
+                  </small>
+                  <small
+                    class="form-text error"
+                    *ngIf="editForm.controls['app'].hasError('maxlength') && editForm.controls['app'].touched">
+                    Apellido Paterno no puede exceder los 25 caracteres.
+                  </small>
+                </div>
+                <div class="col-sm-6 form-group" [ngClass]="{'has-success': editForm.controls['apm'].valid,
+                                    'has-error': editForm.controls['apm'].invalid && (editForm.controls['apm'].touched || editForm.controls['apm'].dirty)}">
+                  <label>Apellido Materno:</label>
+                  <input type="text" formControlName="apm" class="form-control" id="input-apm" placeholder="Apellido Materno Completo"
+                         [class.form-control-danger]="editForm.controls['apm'].invalid && editForm.controls['apm'].touched" autofocus>
+                  <small class="form-text error" *ngIf="editForm.controls['apm'].hasError('required') && (editForm.controls['apm'].touched || editForm.controls['apm'].dirty)">
+                    Apellido Materno es requerido!
+                  </small>
+                  <small
+                    class="form-text error"
+                    *ngIf="editForm.controls['apm'].hasError('maxlength') && editForm.controls['apm'].touched">
+                    Apeliido Materno no puede exceder los 25 caracteres.
+                  </small>
+                </div>
+              </div>
+              <!--     <div class="form-group has-feedback" [ngClass]="{'has-success': myForm.controls['sexo'].valid,
+                                         'has-error': myForm.controls['sexo'].invalid && (myForm.controls['sexo'].touched || myForm.controls['sexo'].dirty)}">
+                     <label>Sexo:</label>
+                     <input type="text" formControlName="sexo" class="form-control" id="input-sexo" placeholder="Sexo"
+                            [class.form-control-danger]="myForm.controls['sexo'].invalid && myForm.controls['sexo'].touched" autofocus>
+                     <small class="form-text error" *ngIf="myForm.controls['sexo'].hasError('required') && (myForm.controls['sexo'].touched || myForm.controls['sexo'].dirty)">
+                       Sexo es requerido!
+                     </small>
+                   </div>-->
+
+              <div class="row full-name-inputs">
+                <div class="col-sm-6 form-group " [ngClass]="{'has-success': editForm.controls['sexo'].valid,
+                                    'has-error': editForm.controls['sexo'].invalid && (editForm.controls['sexo'].touched || editForm.controls['sexo'].dirty)}">
+                  <label>Sexo:</label>
+
+                  <div class="containerss">
+                    <div class="form-check">
+                      <input class="form-check-input" formControlName="sexo" name="sexo" type="radio" value="Masculino" checked="checked"
+                             [class.form-control-danger]="editForm.controls['sexo'].invalid && editForm.controls['sexo'].touched" autofocus>
+                      <label class="form-check-label" for="radio100">Masculino</label>
+                    </div>
+
+                    <div class="form-check">
+                      <input class="form-check-input" formControlName="sexo" name="sexo" type="radio" value="Femenino"
+                             [class.form-control-danger]="editForm.controls['sexo'].invalid && editForm.controls['sexo'].touched" autofocus>
+                      <label class="form-check-label" for="radio101">Femenino</label>
+                    </div>
+                  </div>
+                  <small class="form-text error" *ngIf="editForm.controls['sexo'].hasError('required') && (editForm.controls['sexo'].touched || editForm.controls['sexo'].dirty)">
+                    Sexo es requerido!
+                  </small>
+                </div>
+                <div class="col-sm-6 form-group" [ngClass]="{'has-success': editForm.controls['email'].valid,
+                                    'has-error': editForm.controls['email'].invalid && (editForm.controls['email'].touched || editForm.controls['email'].dirty)}">
+                  <label>Email</label>
+                  <input type="text" formControlName="email" class="form-control" id="input-email" placeholder="Introduzca Email"
+                         [class.form-control-danger]="editForm.controls['email'].invalid && editForm.controls['email'].touched" autofocus>
+                  <small class="form-text error" *ngIf="editForm.controls['email'].hasError('required') && (editForm.controls['email'].touched || editForm.controls['email'].dirty)">
+                    ¡Correo electronico es requerido!
+                  </small>
+                  <small
+                    class="form-text error"
+                    *ngIf="editForm.controls['email'].hasError('email') && editForm.controls['email'].touched">
+                    ¡El correo electrónico debe ser el verdadero!
+                  </small>
+                </div>
+              </div>
+
+
+              <div class="form-group has-feedback" [ngClass]="{'has-success': editForm.controls['direccion'].valid,
+                                    'has-error': editForm.controls['direccion'].invalid && (editForm.controls['direccion'].touched || editForm.controls['direccion'].dirty)}">
+                <label>Direccion:</label>
+                <input type="text" formControlName="direccion" class="form-control" id="input-direccion" placeholder="Escriba su direccion"
+                       [class.form-control-danger]="editForm.controls['direccion'].invalid && editForm.controls['direccion'].touched" autofocus>
+                <small class="form-text error" *ngIf="editForm.controls['direccion'].hasError('required') && (editForm.controls['direccion'].touched || editForm.controls['direccion'].dirty)">
+                  Direccion es requerido!
+                </small>
+              </div>
+
+              <div class="row full-name-inputs">
+                <div class="col-sm-6 form-group" [ngClass]="{'has-success': editForm.controls['fechaNac'].valid,
+                                    'has-error': editForm.controls['fechaNac'].invalid && (editForm.controls['fechaNac'].touched || editForm.controls['fechaNac'].dirty)}">
+                  <label>Fecha de Nacimiento:</label>
+                  <input type="date" formControlName="fechaNac" class="form-control" id="input-fechaNac" placeholder="Seleccione fecha de nacimiento"
+                         [class.form-control-danger]="editForm.controls['fechaNac'].invalid && editForm.controls['fechaNac'].touched" autofocus>
+                  <small class="form-text error" *ngIf="editForm.controls['fechaNac'].hasError('required') && (editForm.controls['fechaNac'].touched || editForm.controls['fechaNac'].dirty)">
+                    Fecha de nacimiento es requerido!
+                  </small>
+                </div>
+                <div class="col-sm-6 form-group" [ngClass]="{'has-success': editForm.controls['fono'].valid,
+                                    'has-error': editForm.controls['fono'].invalid && (editForm.controls['fono'].touched || editForm.controls['fono'].dirty)}">
+                  <label>Fono:</label>
+                  <input type="text" formControlName="fono" class="form-control" id="input-fono" placeholder="Escriba Numero de Fono"
+                         [class.form-control-danger]="editForm.controls['fono'].invalid && editForm.controls['fono'].touched" autofocus>
+                  <small class="form-text error" *ngIf="editForm.controls['fono'].hasError('required') && (editForm.controls['fono'].touched || editForm.controls['fono'].dirty)">
+                    Fono es requerido!
+                  </small>
+                </div>
+                <div class="col-sm-12 form-group" [ngClass]="{'has-success': editForm.controls['role'].valid,
+                                    'has-error': editForm.controls['role'].invalid && (editForm.controls['role'].touched || editForm.controls['role'].dirty)}">
+                  <!-- <label>Tipo Usuario</label>-->
+                  <ng-select [items]="dataRole"
+                             [class.form-control-danger]="editForm.controls['role'].invalid && editForm.controls['role'].touched"
+                             formArrayName="role"
+                             bindLabel="name"
+                             bindValue="id"
+                             [multiple]="true"
+                             [closeOnSelect]="false"
+                             placeholder="Seleccione Tipo Usuario">
+                  </ng-select>
+                  <small class="form-text error" *ngIf="editForm.controls['role'].hasError('required') && (editForm.controls['role'].touched || editForm.controls['role'].dirty)">
+                    Tipo de Usuario es requerido!
+                  </small>
+                  <!-- <div formArrayName="role">
+
+                     <ul class="nav nav-pills nav-stacked">
+                       <label *ngFor="let rol of dataRole">
+
+                           <li style="color: black">
+                             <i style="margin-left: 10px"></i>
+                             <input type="checkbox" (change)="onChange(rol.id, $event.target.checked)"/>
+                             {{rol.name}}
+                           </li>
+
+                       </label>
+                     </ul>
+
+                   </div>-->
+                </div>
+              </div>
+            </nb-card-body>
+          </nb-card>
+          <!-- <nb-card>
+             <nb-card-header>Datos Usuario</nb-card-header>
+             <nb-card-body>
+               <div class="row full-name-inputs">
+                 <div class="col-sm-6 form-group" [ngClass]="{'has-success': myForm.controls['name'].valid,
+                                     'has-error': myForm.controls['name'].invalid && (myForm.controls['name'].touched || myForm.controls['name'].dirty)}">
+                   <label>Usuario</label>
+                   <input type="text" formControlName="name" class="form-control" id="input-name"
+                          class="form-control" placeholder="Introduzca Usuario"
+                          [class.form-control-danger]="myForm.controls['name'].invalid && myForm.controls['name'].touched" autofocus>
+                   <small class="form-text error" *ngIf="myForm.controls['name'].hasError('required') && (myForm.controls['name'].touched || myForm.controls['name'].dirty)">
+                     Usuario es requerido!
+                   </small>
+                   <small
+                     class="form-text error"
+                     *ngIf="myForm.controls['name'].hasError('minlength') && myForm.controls['name'].touched">
+                     Usuario requiere al menos 4 caracteres de longitud.
+                   </small>
+                   <small
+                     class="form-text error"
+                     *ngIf="myForm.controls['name'].hasError('maxlength') && myForm.controls['name'].touched">
+                     Usuario no puede exceder 50 caracteres.
+                   </small>
+                 </div>
+
+
+               </div>
+
+               <div class="row full-name-inputs">
+                 <div class="col-sm-6 form-group" [ngClass]="{'has-success': myForm.controls['password'].valid,
+                                     'has-error': myForm.controls['password'].invalid && (myForm.controls['password'].touched || myForm.controls['password'].dirty)}">
+                   <label>Contraseña</label>
+                   <input type="password" formControlName="password" class="form-control" id="input-password" placeholder="Introduzca contraseña"
+                          [class.form-control-danger]="myForm.controls['password'].invalid && myForm.controls['password'].touched" autofocus>
+                   <small class="form-text error" *ngIf="myForm.controls['password'].hasError('required') && (myForm.controls['password'].touched || myForm.controls['password'].dirty)">
+                     ¡Se requiere contraseña!
+                   </small>
+                   <small
+                     class="form-text error"
+                     *ngIf="myForm.controls['password'].hasError('minlength') && myForm.controls['password'].touched">
+                     Contraseña requiere al menos 8 caracteres de longitud.
+                   </small>
+                   <small
+                     class="form-text error"
+                     *ngIf="myForm.controls['password'].hasError('maxlength') && myForm.controls['password'].touched">
+                     Contraseña no puede exceder 60 caracteres.
+                   </small>
+                 </div>
+                 <div class="col-sm-6 form-group" [ngClass]="{'has-success': myForm.controls['password_confirmation'].valid,
+                                     'has-error': myForm.controls['password_confirmation'].invalid && (myForm.controls['password_confirmation'].touched || myForm.controls['password_confirmation'].dirty)}">
+                   <label>Repite la contraseña</label>
+                   <input type="password" formControlName="password_confirmation" class="form-control" id="input-password_confirmation" placeholder="Confirmar contraseña"
+                          [class.form-control-danger]="(myForm.controls['password_confirmation'].invalid || myForm.controls['password'].value != myForm.controls['password_confirmation'].value) && myForm.controls['password_confirmation'].touched">
+                   <small class="form-text error" *ngIf="myForm.controls['password_confirmation'].hasError('required') && (myForm.controls['password_confirmation'].touched || myForm.controls['password_confirmation'].dirty)">
+                     ¡Se requiere confirmación de contraseña!
+                   </small>
+                   <small
+                     class="form-text error"
+                     *ngIf="myForm.controls['password_confirmation'].touched && myForm.controls['password'].value != myForm.controls['password_confirmation'].value && !myForm.controls['password_confirmation'].hasError('required')">
+                     La contraseña no coincide con la contraseña de confirmación.'
+                   </small>
+                 </div>
+               </div>
+             </nb-card-body>
+           </nb-card>-->
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success"> Editar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<div id="myModalMas" class="modal fade" role="dialog" data-backdrop="static">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span>Insertar mas Titulos</span>
+        <button  type="button" class="close" aria-label="Close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+        <div class="modal-body">
+          <form class="form-horizontal" [formGroup]="myForm" novalidate (submit)="masTitul(myForm.value)">
+          <div class="row full-name-inputs">
+            <div class="col-sm-5 form-group" [ngClass]="{'has-success': myForm.controls['titulo'].valid,
+                                    'has-error': myForm.controls['titulo'].invalid && (myForm.controls['titulo'].touched || myForm.controls['titulo'].dirty)}">
+              <label>Titulo:</label>
+              <input type="text" formControlName="titulo" class="form-control"
+                     placeholder="Titulo"
+                     [class.form-control-danger]="myForm.controls['titulo'].invalid && myForm.controls['titulo'].touched">
+            </div>
+            <div class="col-sm-5 form-group" [ngClass]="{'has-success': myForm.controls['fecEmision'].valid,
+                                    'has-error': myForm.controls['fecEmision'].invalid && (myForm.controls['fecEmision'].touched || myForm.controls['fecEmision'].dirty)}">
+              <label>Fecha Emisión:</label>
+              <input type="date" formControlName="fecEmision" class="form-control" placeholder="Fecha emisíon"
+                     [class.form-control-danger]="myForm.controls['fecEmision'].invalid && myForm.controls['fecEmision'].touched">
+            </div>
+            <div class="col-sm-2 form-group">
+              <label>Agregar</label>
+              <button class="btn btn-block btn-success btn-xs"><i class="fa fa-plus"></i></button>
+            </div>
+          </div>
+          </form>
+          <table class="table table-striped row-border hover">
+            <thead>
+            <tr>
+              <th><b>N</b></th>
+              <th>
+                <b>Titulo</b>
+              </th>
+              <th>
+                <b>Fecha Emisíon</b>
+              </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let item of datosArray; let i= index">
+              <td><b>{{i+1}}</b></td>
+              <td><b>{{item.titulo}}</b></td>
+              <td><b>{{item.fecEmision}}</b></td>
+              <td>
+                <button (click)="remove(item)" data-toggle="confirmation" class="btn btn-danger btn-sm"><span class="fa fa-trash"></span></button>
+                <button type="button" (click)="show(item)" data-toggle="modal" data-target="#myModalEdit" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i></button>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success"> Guardar</button>
+        </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,437 @@
+<nb-card>
+  <nb-card-header>
+    <div class="box-header with-border">
+      Lista de Programas Academicos
+      <div class="box-tools pull-right">
+        <a data-toggle="modal" data-target="#myModal"  class="btn btn-block btn-success btn-xs">
+          <i class="fa fa-plus"></i> Nuevo Programa
+        </a>
+      </div>
+    </div>
+  </nb-card-header>
+
+  <nb-card-body>
+    <toaster-container [toasterconfig]="config"></toaster-container>
+    <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped row-border hover">
+      <thead>
+      <tr>
+        <th><b>N</b></th>
+        <th>
+          <b>Programa A.</b>
+        </th>
+        <th>
+          <b>Modalidad</b>
+        </th>
+        <th>
+          <b>Tipo PA</b>
+        </th>
+        <th>
+          <b>Credito</b>
+        </th>
+      <!--  <th>
+          <b>Modulos</b>
+        </th>
+        <th>
+          <b>Contenidos</b>
+        </th> -->
+        <th><b>Acciones</b>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let item of data; let i= index">
+        <td><b>{{i+1}}</b></td>
+        <td><b>{{item.programa}}</b></td>
+        <td><b>{{item.modalidad}}</b></td>
+        <td><b>{{item.tipo}}</b></td>
+        <td><b>{{item.credito}}</b></td>
+      <!--  <td>
+          <button type="button" (click)="showmodule(item)" data-toggle="modal" data-target="#myModalShowModule" class="btn btn-primary btn-sm"><i class="fa fa-eye"></i></button>
+        </td>
+        <td>
+          <button type="button" (click)="showconten(item)" data-toggle="modal" data-target="#myModalShowContent" class="btn btn-primary btn-sm"><i class="fa fa-eye"></i></button>
+        </td> -->
+        <td>
+        <!--  <button (click)="remove(item)" data-toggle="confirmation" class="btn btn-danger btn-sm"><span class="fa fa-trash"></span></button> -->
+          <button type="button" (click)="show(item)" data-toggle="modal" data-target="#myModalEdit" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i></button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </nb-card-body>
+</nb-card>
+<div id="myModal" class="modal fade" role="dialog" data-backdrop="static">
+    <div class="row">
+      <div class="col-lg-6">
+        <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <span>Nuevo Programa Academico</span>
+            <button  type="button" class="close" aria-label="Close" data-dismiss="modal">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <form [formGroup]="myForm" (submit)="agregar(myForm.value)" novalidate>
+            <div class="modal-body">
+              <nb-card>
+                <nb-card-header>Programa Academico</nb-card-header>
+                <nb-card-body>
+                  <div class="form-group has-feedback" [ngClass]="{'has-success': myForm.controls['nombre'].valid,
+                                    'has-error': myForm.controls['nombre'].invalid && (myForm.controls['nombre'].touched || myForm.controls['nombre'].dirty)}">
+                    <label>Nombre</label>
+                    <input type="text" formControlName="nombre" class="form-control" id="stop" placeholder="Introduzca Programa Academico"
+                           [class.form-control-danger]="myForm.controls['nombre'].invalid && myForm.controls['nombre'].touched" autofocus>
+                    <small class="form-text error" *ngIf="myForm.controls['nombre'].hasError('required') && (myForm.controls['nombre'].touched || myForm.controls['nombre'].dirty)">
+                      Nombre de programa es requerido!
+                    </small>
+                  </div>
+
+                  <div class="form-group has-feedback" [ngClass]="{'has-success': myForm.controls['tipo_pa_id'].valid,
+                                    'has-error': myForm.controls['tipo_pa_id'].invalid && (myForm.controls['tipo_pa_id'].touched || myForm.controls['tipo_pa_id'].dirty)}">
+                    <ng-select [items]="dataTypeActive" [class.form-control-danger]="myForm.controls['tipo_pa_id'].invalid && myForm.controls['tipo_pa_id'].touched"
+                               formControlName="tipo_pa_id"
+                               bindLabel="nombre"
+                               bindValue="id"
+                               placeholder="Seleccionar Tipo de Posgrado">
+                    </ng-select>
+                    <small class="form-text error" *ngIf="myForm.controls['tipo_pa_id'].hasError('required') && (myForm.controls['tipo_pa_id'].touched || myForm.controls['tipo_pa_id'].dirty)">
+                      Tipo de Posgrado es requerido!
+                    </small>
+                  </div>
+
+                  <div class="form-group has-feedback" [ngClass]="{'has-success': myForm.controls['modalidad'].valid,
+                                    'has-error': myForm.controls['modalidad'].invalid && (myForm.controls['modalidad'].touched || myForm.controls['modalidad'].dirty)}">
+                    <ng-select [items]="modality" [class.form-control-danger]="myForm.controls['modalidad'].invalid && myForm.controls['modalidad'].touched"
+                               formControlName="modalidad"
+                               bindLabel="nombre"
+                               bindValue="nombre"
+                               placeholder="Seleccionar Modalidad">
+                    </ng-select>
+
+                    <small class="form-text error" *ngIf="myForm.controls['modalidad'].hasError('required') && (myForm.controls['modalidad'].touched || myForm.controls['modalidad'].dirty)">
+                      Modalidad es requerido!
+                    </small>
+                  </div>
+
+                  <div class="form-group has-feedback" [ngClass]="{'has-success': myForm.controls['objetivo'].valid,
+                                    'has-error': myForm.controls['objetivo'].invalid && (myForm.controls['objetivo'].touched || myForm.controls['objetivo'].dirty)}">
+                    <label>Objetivo</label>
+                    <textarea formControlName="objetivo" class="form-control" placeholder="Introduzca objetivos" id="stop5"
+                              [class.form-control-danger]="myForm.controls['objetivo'].invalid && myForm.controls['objetivo'].touched" autofocus></textarea>
+                    <small class="form-text error" *ngIf="myForm.controls['objetivo'].hasError('required') && (myForm.controls['objetivo'].touched || myForm.controls['objetivo'].dirty)">
+                      Objetivo es requerido!
+                    </small>
+                  </div>
+                </nb-card-body>
+              </nb-card>
+
+              <nb-card>
+                <nb-card-header>Plan De Estudios</nb-card-header>
+                <nb-card-body>
+                  <div class="row full-name-inputs">
+
+                    <div class="col-sm-6 form-group" [ngClass]="{'has-success': myForm.controls['numero'].valid,
+                                    'has-error': myForm.controls['numero'].invalid && (myForm.controls['numero'].touched || myForm.controls['numero'].dirty)}">
+                      <label>Nº Modulo</label>
+                      <input type="text" formControlName="numero" class="form-control" id="stop6" placeholder="Introduzca numero del modulo"
+                             [class.form-control-danger]="myForm.controls['numero'].invalid && myForm.controls['numero'].touched" disabled/>
+                      <small class="form-text error" *ngIf="myForm.controls['numero'].hasError('required') && (myForm.controls['numero'].touched || myForm.controls['numero'].dirty)">
+                        Numero del modulo es requerido!
+                      </small>
+                    </div>
+
+                   <!-- <div class="input-group full-width">
+                      <div class="input-group-addon">@</div>
+                      <input type="text" class="form-control" placeholder="Email">
+                    </div>-->
+
+                    <div class="col-sm-6 form-group" [ngClass]="{'has-success': myForm.controls['duracion'].valid,
+                                      'has-error': myForm.controls['duracion'].invalid && (myForm.controls['duracion'].touched || myForm.controls['duracion'].dirty)}">
+                      <label>Duracion Modulo</label>
+
+                      <div class="input-group full-width">
+                        <div class="input-group-addon"><i class="fa fa-clock-o"></i></div>
+                        <input type="text" formControlName="duracion" class="form-control" id="stop7" placeholder="Introduzca duracion"
+                               [class.form-control-danger]="myForm.controls['duracion'].invalid && myForm.controls['duracion'].touched"/>
+                      </div>
+                      <small class="form-text error" *ngIf="myForm.controls['duracion'].hasError('required') && (myForm.controls['duracion'].touched || myForm.controls['duracion'].dirty)">
+                        Duracion es requerido!
+                      </small>
+                      <small class="form-text error"
+                             *ngIf="myForm.controls['duracion'].hasError('pattern') && (myForm.controls['duracion'].touched || myForm.controls['duracion'].dirty)">
+                        Solo Numeros!
+                      </small>
+                    </div>
+                  </div>
+
+                  <div class="row full-name-inputs">
+                    <div class="col-sm-6 form-group" [ngClass]="{'has-success': myForm.controls['nombremodulo'].valid,
+                                      'has-error': myForm.controls['nombremodulo'].invalid && (myForm.controls['nombremodulo'].touched || myForm.controls['nombremodulo'].dirty)}">
+                      <label>Nombre del Modulo</label>
+                      <input type="text" formControlName="nombremodulo" class="form-control" id="stop3" placeholder="Introduzca nombre del modulo"
+                             [class.form-control-danger]="myForm.controls['nombremodulo'].invalid && myForm.controls['nombremodulo'].touched" autofocus>
+                      <small class="form-text error" *ngIf="myForm.controls['nombremodulo'].hasError('required') && (myForm.controls['nombremodulo'].touched || myForm.controls['nombremodulo'].dirty)">
+                        Modulo es requerido!
+                      </small>
+                    </div>
+                    <div class="col-sm-6 form-group" [ngClass]="{'has-success': myForm.controls['numCredito'].valid,
+                                    'has-error': myForm.controls['numCredito'].invalid && (myForm.controls['numCredito'].touched || myForm.controls['numCredito'].dirty)}">
+                      <label>Crédico Académico</label>
+                      <input type="text" formControlName="numCredito" class="form-control" id="stop4" placeholder="Introduzca Crédito Académico"
+                             [class.form-control-danger]="myForm.controls['numCredito'].invalid && myForm.controls['numCredito'].touched" autofocus>
+                      <small class="form-text error" *ngIf="myForm.controls['numCredito'].hasError('required') && (myForm.controls['numCredito'].touched || myForm.controls['numCredito'].dirty)">
+                        Crédito Académico es requerido!
+                      </small>
+                      <small
+                        class="form-text error"
+                        *ngIf="myForm.controls['numCredito'].hasError('maxlength') && myForm.controls['numCredito'].touched">
+                        Crédito Académico no puede exceder 50 caracteres.
+                      </small>
+                      <small class="form-text error"
+                             *ngIf="myForm.controls['numCredito'].hasError('pattern') && (myForm.controls['numCredito'].touched || myForm.controls['numCredito'].dirty)">
+                        Solo Numeros!
+                      </small>
+                    </div>
+                  </div>
+
+                  <div class="form-group has-feedback" [ngClass]="{'has-success': myForm.controls['contenido'].valid,
+                                    'has-error': myForm.controls['contenido'].invalid && (myForm.controls['contenido'].touched || myForm.controls['contenido'].dirty)}">
+                    <label>Contenido</label>
+                    <textarea type="text" formControlName="contenido" class="form-control" id="input-contenido" placeholder="Introduzca Contenido"
+                              [class.form-control-danger]="myForm.controls['contenido'].invalid && myForm.controls['contenido'].touched" autofocus>
+                    </textarea>
+                    <small class="form-text error" *ngIf="myForm.controls['contenido'].hasError('required') && (myForm.controls['contenido'].touched || myForm.controls['contenido'].dirty)">
+                      Contenido es requerido!
+                    </small>
+                  </div>
+                </nb-card-body>
+              </nb-card>
+
+
+            </div>
+            <div class="modal-footer">
+              <button [disabled]="((myForm.controls['nombre'].invalid) || (myForm.controls['modalidad'].invalid) ||
+              (myForm.controls['objetivo'].invalid) || (myForm.controls['duracion'].invalid) || (myForm.controls['tipo_pa_id'].invalid) ||
+              (myForm.controls['nombremodulo'].invalid) || (myForm.controls['numero'].invalid) || (myForm.controls['numCredito'].invalid) ||
+              (myForm.controls['contenido'].invalid))" type="submit" class="btn btn-hero-success pull-right">
+                Agregar
+              </button>
+            </div>
+          </form>
+          <button [disabled]="((myForm.controls['nombre'].invalid) || (myForm.controls['modalidad'].invalid) ||
+              (myForm.controls['objetivo'].invalid) || (myForm.controls['duracion'].invalid) || (myForm.controls['tipo_pa_id'].invalid) ||
+              (myForm.controls['nombremodulo'].invalid) || (myForm.controls['numero'].invalid) || (myForm.controls['numCredito'].invalid))"
+                  (click)="agregarModulos()" class="btn btn-hero-success pull-left">
+            + Mas
+          </button>
+        </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <span>Lista</span>
+            <button  type="button" class="close" aria-label="Close" data-dismiss="modal">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+
+            <div class="modal-body">
+              <div class="content">
+                <div><b>Programa Academico:</b> {{this.cons.nombre}} </div>
+                <div><b>Modalidad:</b> {{this.cons.modalidad}} </div>
+                <div><b>Tipo Programa Academico:</b> {{titleTipoProgramAcademic}} </div>
+              <!--  <div><b>Horas academicas:</b> {{this.cons.duracion_pa}} </div> -->
+              </div>
+              <br><br>
+              <div *ngFor="let items of moduleContent; let i= index">
+                <b>Modulo:</b> {{items.nombremodulo}},
+                <b>Nº Modulo:</b> {{items.numero}},
+                <b>Nº Credito:</b> {{items.numCredito}},
+                <b>Duración:</b> {{items.duracion}}
+                <div class="pull-right">
+                  <a (click)="postContent(items)" class="btn btn-block btn-success btn-xs"><i class="fa fa-plus"></i></a>
+                </div>
+                <table class="table table-striped row-border hover">
+                  <thead>
+                  <tr>
+                    <th><b>Nº</b></th>
+                    <th>
+                      <b>Contenido</b>
+                    </th>
+                    <th><b>Acciones</b>
+                    </th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr *ngFor="let item of items.contenido; let i= index">
+                    <td><b>{{i+1}}</b></td>
+                    <td><b>{{item}}</b></td>
+                    <td>
+                      <button (click)="removeTemporal(item)" class="btn btn-danger btn-sm"><span class="fa fa-trash"></span></button>
+                      <button type="button" (click)="showContent(item)" data-toggle="modal" data-target="#myModalEditContent" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i></button>
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          <form [formGroup]="myForm" (submit)="enviar()" novalidate>
+            <div class="modal-footer">
+              <button [disabled]="((myForm.controls['nombre'].invalid) || (myForm.controls['modalidad'].invalid) ||
+              (myForm.controls['objetivo'].invalid) || (myForm.controls['tipo_pa_id'].invalid))"
+                      type="submit" class="btn btn-hero-success">
+                Guardar
+              </button>
+            </div>
+          </form>
+        </div>
+        </div>
+      </div>
+    </div>
+</div>
+<div id="myModalShowContent" class="modal fade" role="dialog" data-backdrop="static">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span>Lista Contenido</span>
+        <button  type="button" class="close" aria-label="Close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form class="form-horizontal">
+        <div class="modal-body">
+          <table class="table table-striped row-border hover">
+            <thead>
+            <tr>
+              <th><b>N</b></th>
+              <th>
+                <b>Contenido</b>
+              </th>
+              <th><b>Acciones</b>
+              </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let item of dataContenido; let i= index">
+              <td><b>{{i+1}}</b></td>
+              <td><b>{{item.nomcontenido}}</b></td>
+              <td>
+                <button type="button" (click)="show(item)" data-toggle="modal" data-target="#myModalEdit" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i></button>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<div id="myModalShowModule" class="modal fade" role="dialog" data-backdrop="static">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span>Lista Modulo</span>
+        <button  type="button" class="close" aria-label="Close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form class="form-horizontal">
+        <div class="modal-body">
+          <table class="table table-striped row-border hover">
+            <thead>
+            <tr>
+              <th><b>N</b></th>
+              <th>
+                <b>Modulo</b>
+              </th>
+              <th>
+                <b>Num Credito</b>
+              </th>
+              <th>
+                <b>Estado</b>
+              </th>
+              <th><b>Acciones</b>
+              </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let item of dataModulo; let i= index">
+              <td><b>{{i+1}}</b></td>
+              <td><b>{{item.nombremodulo}}</b></td>
+              <td><b>{{item.numCredito}}</b></td>
+              <td><b>{{item.valido}}</b></td>
+              <td>
+                <button type="button" (click)="show(item)" data-toggle="modal" data-target="#myModalEdit" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i></button>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<div id="myModalEditContent" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span>Modificar Contenido</span>
+        <button  type="button" class="close" aria-label="Close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form class="form-horizontal" [formGroup]="editFormContent" novalidate (submit)="editContent(editFormContent.value)">
+        <div class="modal-body">
+
+          <div class="form-group has-feedback" [ngClass]="{'has-success': editFormContent.controls['content'].valid,
+                                    'has-error': editFormContent.controls['content'].invalid && (editFormContent.controls['content'].touched || editFormContent.controls['content'].dirty)}">
+            <label>Contenido</label>
+            <input type="text" formControlName="content" class="form-control" id="input-conte" placeholder="Introduzca Contenido"
+                   [class.form-control-danger]="editFormContent.controls['content'].invalid && editFormContent.controls['content'].touched" autofocus>
+            <small class="form-text error" *ngIf="editFormContent.controls['content'].hasError('required') && (editFormContent.controls['content'].touched || editFormContent.controls['content'].dirty)">
+              Nombre es requerido!
+            </small>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success"> Editar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!--<div id="myModalPostContent" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span>Modificar Programa Academico</span>
+        <button  type="button" class="close" aria-label="Close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form class="form-horizontal" [formGroup]="myFormPostContent" novalidate (submit)="enviarPostContent(myFormPostContent.value)">
+        <div class="modal-body">
+
+          <div class="form-group has-feedback" [ngClass]="{'has-success': myFormPostContent.controls['content'].valid,
+                                    'has-error': myFormPostContent.controls['content'].invalid && (myFormPostContent.controls['content'].touched || myFormPostContent.controls['content'].dirty)}">
+            <label>Contenido</label>
+            <input type="text" formControlName="content" class="form-control" id="input-content-post" placeholder="Introduzca Contenido"
+                   [class.form-control-danger]="myFormPostContent.controls['content'].invalid && myFormPostContent.controls['content'].touched" autofocus>
+            <small class="form-text error" *ngIf="myFormPostContent.controls['content'].hasError('required') && (myFormPostContent.controls['content'].touched || myFormPostContent.controls['content'].dirty)">
+              Nombre es requerido!
+            </small>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success"> Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>-->

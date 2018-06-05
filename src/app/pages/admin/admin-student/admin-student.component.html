@@ -1,0 +1,92 @@
+<div class="row">
+  <div class="col-xxxl-3 col-xxl-4 col-lg-5 col-md-6">
+  <nb-card>
+      <div class="btn-group-vertical" *ngFor="let item of data; let i= index">
+       <button type="button" (click)="mostrarModulos(item)" class="btn btn-primary">{{item.nombre}}</button>
+      </div>
+
+  </nb-card>
+
+      <!--  <div class="nav-side-menu">
+          <div class="brand">Programas Academicos</div>
+          <i class="fa fa-bars fa-2x toggle-btn" data-toggle="collapse" data-target="#menu-content"></i>
+
+            <div class="menu-list" *ngFor="let item of data; let i= index">
+                <ul id="menu-content" class="menu-content collapse out">
+                    <li data-toggle="collapse" [attr.data-target]="'#' + item.id" class="collapsed">
+                      <a><i class="fa fa-check fa-lg"></i>{{item.nombre}}<span class="arrow"></span></a>
+                    </li>
+                    <ul class="sub-menu collapse" id="{{item.id}}">
+                      <li><a>{{item.nombremodulo}}</a></li>
+                    </ul>
+                </ul>
+             </div>
+        </div> -->
+      <!--  <div class="box-body">
+          <div class="contact" *ngFor="let item of data; let i= index">
+            <ol>
+              <li>{{item.nombre}}
+                <ol><br />
+                  <li><a>{{item.nombremodulo}}</a></li>
+                </ol>
+              </li>
+            </ol>
+          </div>
+        </div> -->
+  </div>
+
+  <div class="col-xxxl-9 col-xxl-8 col-lg-7 col-md-6">
+    <nb-card size="large">
+      <nb-card-header>
+        <div class="table-header">
+          Lista del Personal
+        </div>
+      </nb-card-header>
+
+      <nb-card-body>
+        <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped row-border hover">
+          <thead>
+          <tr>
+            <th><b>N</b></th>
+            <th>
+              <b>Modulo</b>
+            </th>
+            <th>
+              <b>Modalidad</b>
+            </th>
+            <th>
+              <b>Grupo</b>
+            </th>
+            <th>
+              <b>Ambiente</b>
+            </th>
+            <th><b>Evaluacion</b>
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let item of dataModuleEval; let i= index">
+            <td><b>{{i+1}}</b></td>
+            <td><b>{{item.nombremodulo}}</b></td>
+            <td><b>{{item.modalidad}}</b></td>
+            <td><b>{{item.grupo}}</b></td>
+            <td><b>{{item.nombre}}</b></td>
+            <td>
+              <div class="btn-group" role="group">
+                <button id="btnGroupDrop1" type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <span class="fa fa-navicon"></span>
+                </button>
+                <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                  <button class="dropdown-item">Dropdown link</button>
+                  <button class="dropdown-item">Dropdown link</button>
+                </div>
+              </div>
+            <!--  <button (click)="remove(item)" data-toggle="confirmation" class="btn btn-primary btn-sm"><span class="fa fa-navicon"></span></button> -->
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </nb-card-body>
+    </nb-card>
+  </div>
+</div>

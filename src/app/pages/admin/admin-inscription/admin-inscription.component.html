@@ -1,0 +1,218 @@
+<nb-card>
+  <nb-card-header>
+    <div class="box-header with-border">
+      Lista de Inscripciones
+      <div class="box-tools pull-right">
+        <a data-toggle="modal" data-target="#myModal"  class="btn btn-block btn-success btn-xs"><i class="fa fa-plus"></i> Nueva Inscripcion</a>
+      </div>
+    </div>
+  </nb-card-header>
+
+  <nb-card-body>
+    <toaster-container [toasterconfig]="config"></toaster-container>
+    <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped row-border hover">
+      <thead>
+      <tr>
+        <th><b>N</b></th>
+        <th>
+          <b>Fecha</b>
+        </th>
+      <!--  <th>
+          <b>Estado</b>
+        </th> -->
+        <th>
+          <b>Detalle Cronograma</b>
+        </th>
+        <th>
+          <b>Ambiente</b>
+        </th>
+        <th>
+          <b>Persona</b>
+        </th>
+        <th><b>Acciones</b>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let item of data; let i= index">
+        <td><b>{{i+1}}</b></td>
+        <td><b>{{item.fecha}}</b></td>
+      <!--  <td><b>{{item.valido}}</b></td> -->
+        <td><b>{{item.detalle_cronograma.cronograma.programa_academico.nombre}} V{{item.detalle_cronograma.cronograma.version}}</b></td>
+        <td><b>{{item.detalle_cronograma.ambiente.nombre}}</b></td>
+        <td><b>{{item.persona.nombres}} {{item.persona.app}} {{item.persona.apm}}</b></td>
+        <td>
+        <!--  <button (click)="remove(item)" data-toggle="confirmation" class="btn btn-danger btn-sm"><span class="fa fa-trash"></span></button> -->
+          <button type="button" (click)="show(item)" data-toggle="modal" data-target="#myModalEdit" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i></button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </nb-card-body>
+</nb-card>
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span>Nueva Inscripción</span>
+        <button  type="button" class="close" aria-label="Close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form [formGroup]="myForm" (submit)="post(myForm.value)" novalidate>
+        <div class="modal-body">
+          <div class="form-group has-feedback" [ngClass]="{'has-success': myForm.controls['fecha'].valid,
+                                    'has-error': myForm.controls['fecha'].invalid && (myForm.controls['fecha'].touched || myForm.controls['fecha'].dirty)}">
+            <label>Fecha</label>
+            <input type="date" formControlName="fecha" class="form-control" id="input-fecha" placeholder="Introduzca fecha"
+                   [class.form-control-danger]="myForm.controls['fecha'].invalid && myForm.controls['fecha'].touched" autofocus>
+            <small class="form-text error" *ngIf="myForm.controls['fecha'].hasError('required') && (myForm.controls['fecha'].touched || myForm.controls['fecha'].dirty)">
+              Fecha es requerido!
+            </small>
+          </div>
+          <div class="form-group has-feedback" [ngClass]="{'has-success': myForm.controls['detalle_cronograma_id'].valid,
+                                    'has-error': myForm.controls['detalle_cronograma_id'].invalid && (myForm.controls['detalle_cronograma_id'].touched || myForm.controls['detalle_cronograma_id'].dirty)}">
+            <ng-select [items]="dataDetalleCronograma" [class.form-control-danger]="myForm.controls['detalle_cronograma_id'].invalid && myForm.controls['detalle_cronograma_id'].touched"
+                       formControlName="detalle_cronograma_id"
+                       bindLabel="cronograma.programa_academico.nombre"
+                       bindValue="id"
+                       placeholder="Seleccionar Detalle Cronograma">
+              <ng-template ng-header-tmp>
+                Escribe para buscar...
+              </ng-template>
+              <ng-template ng-label-tmp let-item="item">
+                {{item.cronograma.programa_academico.nombre}} V{{item.cronograma.version}}
+              </ng-template>
+              <ng-template ng-option-tmp let-item="item">
+                <div>{{item.cronograma.programa_academico.nombre}} V{{item.cronograma.version}}</div>
+                <small><b>Docente:</b> {{item.persona.nombres}}</small>
+              </ng-template>
+              <ng-template ng-footer-tmp>
+                Custom footer
+              </ng-template>
+            </ng-select>
+
+            <small class="form-text error" *ngIf="myForm.controls['detalle_cronograma_id'].hasError('required') && (myForm.controls['detalle_cronograma_id'].touched || myForm.controls['detalle_cronograma_id'].dirty)">
+              Detalle cronograma es requerido!
+            </small>
+          </div>
+          <div class="form-group has-feedback" [ngClass]="{'has-success': myForm.controls['persona_id'].valid,
+                                    'has-error': myForm.controls['persona_id'].invalid && (myForm.controls['persona_id'].touched || myForm.controls['persona_id'].dirty)}">
+            <ng-select [items]="dataEstudiante" [class.form-control-danger]="myForm.controls['persona_id'].invalid && myForm.controls['persona_id'].touched"
+                       formControlName="persona_id"
+                       bindLabel="nombres"
+                       bindValue="id"
+                       placeholder="Seleccionar Estudiante">
+              <ng-template ng-header-tmp>
+                <button  (click)="mover()" class="col-lg-12 btn btn-sm btn-outline-warning">Agregar Nuevo Usuario
+                </button>
+              </ng-template>
+              <ng-template ng-label-tmp let-item="item">
+                {{item.nombres}} {{item.app}} {{item.apm}}
+              </ng-template>
+              <ng-template ng-option-tmp let-item="item">
+                {{item.nombres}} {{item.app}} {{item.apm}}
+              </ng-template>
+            </ng-select>
+
+            <small class="form-text error" *ngIf="myForm.controls['persona_id'].hasError('required') && (myForm.controls['persona_id'].touched || myForm.controls['persona_id'].dirty)">
+              Estudiante es requerido!
+            </small>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-hero-success">
+            Guardar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="myModalEdit" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span>Modificar Inscripción</span>
+        <button  type="button" class="close" aria-label="Close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form class="form-horizontal" [formGroup]="editForm" novalidate (submit)="edit(editForm.value)">
+        <div class="modal-body">
+          <div class="form-group has-feedback" [ngClass]="{'has-success': myForm.controls['fecha'].valid,
+                                    'has-error': myForm.controls['fecha'].invalid && (myForm.controls['fecha'].touched || myForm.controls['fecha'].dirty)}">
+            <label>Fecha</label>
+            <input type="date" formControlName="fecha" class="form-control" id="input-fecha" placeholder="Introduzca fecha"
+                   [class.form-control-danger]="myForm.controls['fecha'].invalid && myForm.controls['fecha'].touched" autofocus>
+            <small class="form-text error" *ngIf="myForm.controls['fecha'].hasError('required') && (myForm.controls['fecha'].touched || myForm.controls['fecha'].dirty)">
+              Fecha es requerido!
+            </small>
+          </div>
+          <div class="form-group has-feedback" [ngClass]="{'has-success': myForm.controls['detalle_cronograma_id'].valid,
+                                    'has-error': myForm.controls['detalle_cronograma_id'].invalid && (myForm.controls['detalle_cronograma_id'].touched || myForm.controls['detalle_cronograma_id'].dirty)}">
+            <ng-select [items]="dataDetalleCronograma" [class.form-control-danger]="myForm.controls['detalle_cronograma_id'].invalid && myForm.controls['detalle_cronograma_id'].touched"
+                       formControlName="detalle_cronograma_id"
+                       bindLabel="fecha"
+                       bindValue="id"
+                       placeholder="Seleccionar Detalle Cronograma">
+              <!--  <ng-template ng-option-tmp let-item="item">
+                  {{item.nombre}}
+                </ng-template>-->
+            </ng-select>
+
+            <small class="form-text error" *ngIf="myForm.controls['detalle_cronograma_id'].hasError('required') && (myForm.controls['detalle_cronograma_id'].touched || myForm.controls['detalle_cronograma_id'].dirty)">
+              Detalle cronograma es requerido!
+            </small>
+          </div>
+          <div class="form-group has-feedback" [ngClass]="{'has-success': myForm.controls['persona_id'].valid,
+                                    'has-error': myForm.controls['persona_id'].invalid && (myForm.controls['persona_id'].touched || myForm.controls['persona_id'].dirty)}">
+            <ng-select [items]="dataEstudiante" [class.form-control-danger]="myForm.controls['persona_id'].invalid && myForm.controls['persona_id'].touched"
+                       formControlName="persona_id"
+                       bindLabel="nombres"
+                       bindValue="id"
+                       placeholder="Seleccionar Estudiante">
+              <ng-template ng-header-tmp>
+                Escribe para buscar...
+              </ng-template>
+              <ng-template ng-label-tmp let-item="item">
+                {{item.nombres}} {{item.app}} {{item.apm}}
+              </ng-template>
+              <ng-template ng-option-tmp let-item="item">
+                {{item.nombres}} {{item.app}} {{item.apm}}
+              </ng-template>
+            </ng-select>
+
+            <small class="form-text error" *ngIf="myForm.controls['persona_id'].hasError('required') && (myForm.controls['persona_id'].touched || myForm.controls['persona_id'].dirty)">
+              Estudiante es requerido!
+            </small>
+          </div>
+
+          <div class="form-group  has-feedback" [ngClass]="{'has-success': editForm.controls['valido'].valid,
+                                    'has-error': editForm.controls['valido'].invalid && (editForm.controls['valido'].touched || editForm.controls['valido'].dirty)}">
+            <label>Estado</label>
+
+            <div class="containerss">
+              <div class="form-check">
+                <input class="form-check-input" formControlName="valido" name="valido" type="radio" [value]="1" id="radio100" checked="checked"
+                       [class.form-control-danger]="myForm.controls['valido'].invalid && myForm.controls['valido'].touched" autofocus>
+                <label class="form-check-label" for="radio100">Activo</label>
+              </div>
+
+              <div class="form-check">
+                <input class="form-check-input" formControlName="valido" name="valido" type="radio" [value]="0" id="radio101"
+                       [class.form-control-danger]="myForm.controls['valido'].invalid && myForm.controls['valido'].touched" autofocus>
+                <label class="form-check-label" for="radio101">Inactivo</label>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success"> Editar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,9 @@
+nb-checkbox {
+  margin-bottom: 1rem;
+}
+.modal-content {
+  background-color: rgba(0, 0, 0, 0.5);
+//background-image: -moz-linear-gradient(100% 100% 90deg, rgba(100,100,100,.5),rgba(100,100,100,.5));
+  background-image: -webkit-gradient(linear, left bottom, left top, from(rgba(100,100,100,.5)), to(rgba(100,100,100,.5)));
+  filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0, StartColorStr='#80646464', EndColorStr='#80646464');
+}

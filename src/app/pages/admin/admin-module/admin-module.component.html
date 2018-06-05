@@ -1,0 +1,250 @@
+<nb-card>
+  <nb-card-header>
+    <div class="box-header with-border">
+      Lista de Usuarios
+      <div class="box-tools pull-right">
+        <a data-toggle="modal" data-target="#myModal"  class="btn btn-block btn-success btn-xs"><i class="fa fa-plus"></i> Nuevo Usuario</a>
+      </div>
+    </div>
+  </nb-card-header>
+
+  <nb-card-body>
+    <toaster-container [toasterconfig]="config"></toaster-container>
+    <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped row-border hover">
+      <thead>
+      <tr>
+        <th><b>N</b></th>
+        <th>
+          <b>Nombre</b>
+        </th>
+        <th>
+          <b>Num Credito</b>
+        </th>
+        <th>
+          <b>Estado</b>
+        </th>
+        <th>
+          <b>Programa A.</b>
+        </th>
+        <th>
+          <b>Contenido</b>
+        </th>
+        <th><b>Acciones</b>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let item of data; let i= index">
+        <td><b>{{i+1}}</b></td>
+        <td><b>{{item.nombre}}</b></td>
+        <td><b>{{item.numCredito}}</b></td>
+        <td><b>{{item.valido}}</b></td>
+        <td><b>{{item.programa_academico.nombre}}</b></td>
+        <td>
+          <button type="button" (click)="conten(item)" data-toggle="modal" data-target="#myModalConten" class="btn btn-primary btn-sm"><i class="fa fa-eye"></i></button>
+        </td>
+        <td>
+          <button (click)="remove(item)" data-toggle="confirmation" class="btn btn-danger btn-sm"><span class="fa fa-trash"></span></button>
+          <button type="button" (click)="show(item)" data-toggle="modal" data-target="#myModalEdit" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i></button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </nb-card-body>
+</nb-card>
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span>Registrar Nuevo Personal</span>
+        <button  type="button" class="close" aria-label="Close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form [formGroup]="myForm" (submit)="post(myForm.value)" novalidate>
+        <div class="modal-body">
+
+          <div class="form-group has-feedback" [ngClass]="{'has-success': myForm.controls['programa_academico_id'].valid,
+                                    'has-error': myForm.controls['programa_academico_id'].invalid && (myForm.controls['programa_academico_id'].touched || myForm.controls['programa_academico_id'].dirty)}">
+            <label>Seleccionar Tipo de Programa Academico</label>
+            <select class="form-control selectpicker" data-live-search="true" formControlName="programa_academico_id"
+                    [class.form-control-danger]="myForm.controls['programa_academico_id'].invalid && myForm.controls['programa_academico_id'].touched">
+              <option *ngFor="let program of dataProgramAcademicActive" [value]="program.id" data-tokens="program.nombre">
+                {{program.nombre}}
+              </option>
+            </select>
+            <small class="form-text error" *ngIf="myForm.controls['programa_academico_id'].hasError('required') && (myForm.controls['programa_academico_id'].touched || myForm.controls['programa_academico_id'].dirty)">
+              Programa Academico es requerido!
+            </small>
+          </div>
+
+          <div class="form-group has-feedback" [ngClass]="{'has-success': myForm.controls['nombre'].valid,
+                                    'has-error': myForm.controls['nombre'].invalid && (myForm.controls['nombre'].touched || myForm.controls['nombre'].dirty)}">
+            <label>Nombre</label>
+            <input type="text" formControlName="nombre" class="form-control" id="input-duracion" placeholder="Introduzca duracion"
+                   [class.form-control-danger]="myForm.controls['nombre'].invalid && myForm.controls['nombre'].touched" autofocus>
+            <small class="form-text error" *ngIf="myForm.controls['nombre'].hasError('required') && (myForm.controls['nombre'].touched || myForm.controls['nombre'].dirty)">
+              Nombre es requerido!
+            </small>
+          </div>
+
+          <div class="form-group has-feedback" [ngClass]="{'has-success': myForm.controls['numCredito'].valid,
+                                    'has-error': myForm.controls['numCredito'].invalid && (myForm.controls['numCredito'].touched || myForm.controls['numCredito'].dirty)}">
+            <label>Numero Credito</label>
+            <input type="text" formControlName="numCredito" class="form-control" id="input-numCredito" placeholder="Introduzca Usuario"
+                   [class.form-control-danger]="myForm.controls['numCredito'].invalid && myForm.controls['numCredito'].touched" autofocus>
+            <small class="form-text error" *ngIf="myForm.controls['numCredito'].hasError('required') && (myForm.controls['numCredito'].touched || myForm.controls['numCredito'].dirty)">
+              Numero Credito es requerido!
+            </small>
+            <small
+              class="form-text error"
+              *ngIf="myForm.controls['numCredito'].hasError('maxlength') && myForm.controls['numCredito'].touched">
+              Numero Credito no puede exceder 50 caracteres.
+            </small>
+          </div>
+
+          <div class="form-group has-feedback" [ngClass]="{'has-success': myForm.controls['nomcontenido'].valid,
+                                    'has-error': myForm.controls['nomcontenido'].invalid && (myForm.controls['nomcontenido'].touched || myForm.controls['nomcontenido'].dirty)}">
+            <label>Contenido</label>
+            <input type="text" formControlName="nomcontenido" class="form-control" id="input-nombre" placeholder="Introduzca Nombre"
+                   [class.form-control-danger]="myForm.controls['nomcontenido'].invalid && myForm.controls['nomcontenido'].touched" autofocus>
+            <small class="form-text error" *ngIf="myForm.controls['nomcontenido'].hasError('required') && (myForm.controls['nomcontenido'].touched || myForm.controls['nomcontenido'].dirty)">
+              Contenido es requerido!
+            </small>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-hero-success">
+            Guardar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<div id="myModalEdit" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span>Modificar Personal</span>
+        <button  type="button" class="close" aria-label="Close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form class="form-horizontal" [formGroup]="editForm" novalidate (submit)="edit(editForm.value)">
+        <div class="modal-body">
+
+          <div class="form-group has-feedback" [ngClass]="{'has-success': myForm.controls['programa_academico_id'].valid,
+                                    'has-error': myForm.controls['programa_academico_id'].invalid && (myForm.controls['programa_academico_id'].touched || myForm.controls['programa_academico_id'].dirty)}">
+            <label>Seleccionar Tipo de Programa Academico</label>
+            <select class="form-control selectpicker" data-live-search="true" formControlName="programa_academico_id"
+                    [class.form-control-danger]="myForm.controls['programa_academico_id'].invalid && myForm.controls['programa_academico_id'].touched">
+              <option *ngFor="let program of dataProgramAcademicActive" [value]="program.id" data-tokens="program.nombre">
+                {{program.nombre}}
+              </option>
+            </select>
+            <small class="form-text error" *ngIf="myForm.controls['programa_academico_id'].hasError('required') && (myForm.controls['programa_academico_id'].touched || myForm.controls['programa_academico_id'].dirty)">
+              Programa Academico es requerido!
+            </small>
+          </div>
+
+          <div class="form-group has-feedback" [ngClass]="{'has-success': myForm.controls['nombre'].valid,
+                                    'has-error': myForm.controls['nombre'].invalid && (myForm.controls['nombre'].touched || myForm.controls['nombre'].dirty)}">
+            <label>Nombre</label>
+            <input type="text" formControlName="nombre" class="form-control" id="input-duracion" placeholder="Introduzca duracion"
+                   [class.form-control-danger]="myForm.controls['nombre'].invalid && myForm.controls['nombre'].touched" autofocus>
+            <small class="form-text error" *ngIf="myForm.controls['nombre'].hasError('required') && (myForm.controls['nombre'].touched || myForm.controls['nombre'].dirty)">
+              Nombre es requerido!
+            </small>
+          </div>
+
+          <div class="form-group has-feedback" [ngClass]="{'has-success': myForm.controls['numCredito'].valid,
+                                    'has-error': myForm.controls['numCredito'].invalid && (myForm.controls['numCredito'].touched || myForm.controls['numCredito'].dirty)}">
+            <label>Numero Credito</label>
+            <input type="text" formControlName="numCredito" class="form-control" id="input-numCredito" placeholder="Introduzca Usuario"
+                   [class.form-control-danger]="myForm.controls['numCredito'].invalid && myForm.controls['numCredito'].touched" autofocus>
+            <small class="form-text error" *ngIf="myForm.controls['numCredito'].hasError('required') && (myForm.controls['numCredito'].touched || myForm.controls['numCredito'].dirty)">
+              Numero Credito es requerido!
+            </small>
+            <small
+              class="form-text error"
+              *ngIf="myForm.controls['numCredito'].hasError('maxlength') && myForm.controls['numCredito'].touched">
+              Numero Credito no puede exceder 50 caracteres.
+            </small>
+          </div>
+
+          <div class="form-group  has-feedback" [ngClass]="{'has-success': myForm.controls['valido'].valid,
+                                    'has-error': myForm.controls['valido'].invalid && (myForm.controls['valido'].touched || myForm.controls['valido'].dirty)}">
+            <label>Estado</label>
+
+            <div class="containerss">
+              <div class="form-check">
+                <input class="form-check-input" formControlName="valido" name="valido" type="radio" [value]="1" id="radio100" checked="checked"
+                       [class.form-control-danger]="myForm.controls['valido'].invalid && myForm.controls['valido'].touched" autofocus>
+                <label class="form-check-label" for="radio100">Activo</label>
+              </div>
+
+              <div class="form-check">
+                <input class="form-check-input" formControlName="valido" name="valido" type="radio" [value]="0" id="radio101"
+                       [class.form-control-danger]="myForm.controls['valido'].invalid && myForm.controls['valido'].touched" autofocus>
+                <label class="form-check-label" for="radio101">Inactivo</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group has-feedback" [ngClass]="{'has-success': myForm.controls['nomcontenido'].valid,
+                                    'has-error': myForm.controls['nomcontenido'].invalid && (myForm.controls['nomcontenido'].touched || myForm.controls['nomcontenido'].dirty)}">
+            <label>Contenido</label>
+            <input type="text" formControlName="nomcontenido" class="form-control" id="input-nombre" placeholder="Introduzca Nombre"
+                   [class.form-control-danger]="myForm.controls['nomcontenido'].invalid && myForm.controls['nomcontenido'].touched" autofocus>
+            <small class="form-text error" *ngIf="myForm.controls['nomcontenido'].hasError('required') && (myForm.controls['nomcontenido'].touched || myForm.controls['nomcontenido'].dirty)">
+              Contenido es requerido!
+            </small>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success"> Editar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<div id="myModalConten" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span>Modificar Personal</span>
+        <button  type="button" class="close" aria-label="Close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form class="form-horizontal">
+        <div class="modal-body">
+          <table class="table table-striped row-border hover">
+            <thead>
+            <tr>
+              <th><b>N</b></th>
+              <th>
+                <b>Contenido</b>
+              </th>
+              <th><b>Acciones</b>
+              </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let item of dataContent; let i= index">
+              <td><b>{{i+1}}</b></td>
+              <td><b>{{item.nomcontenido}}</b></td>
+              <td>
+                <button type="button" (click)="show(item)" data-toggle="modal" data-target="#myModalEdit" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i></button>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

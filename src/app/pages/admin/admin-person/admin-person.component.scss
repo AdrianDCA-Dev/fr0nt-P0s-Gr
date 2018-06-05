@@ -1,0 +1,33 @@
+@import url('https://fonts.googleapis.com/css?family=Lato');
+
+.containerss{
+  display: block;
+  position: relative;
+  height: auto;
+  width: 500px;
+  padding: 0 20px 0;
+}
+
+input[type=radio]:checked ~ .check {
+  border: 5px solid #0DFF92;
+}
+
+input[type=radio]:checked ~ .check::before{
+  background: #0DFF92;
+}
+
+input[type=radio]:checked ~ label{
+  color: #0DFF92;
+}
+
+.alert {
+  box-sizing: border-box;
+  background-color: #0DFF92;
+  width: 100%;
+  position: relative;
+  top: 0;
+  left: 0;
+  z-index: 300;
+  padding: 20px 40px;
+  color: #333;
+}
