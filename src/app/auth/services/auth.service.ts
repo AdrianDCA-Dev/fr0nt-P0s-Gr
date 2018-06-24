@@ -150,7 +150,7 @@ export class NbAuthService {
       .switchMap((result: NbAuthResult) => {
         console.log('áutenticate');
         if (result.isSuccess() && result.getTokenValue()) {
-          console.log('result_autenticate', result.getUserValue());
+          console.log('result_autenticate', result.getResponse());
           localStorage.setItem('user', btoa(JSON.stringify(result.getUserValue())));
           return this.tokenService.set(result.getTokenValue()) && this.tokenService.setUser(result.getUserValue())
             .switchMap(_ => this.tokenService.get())

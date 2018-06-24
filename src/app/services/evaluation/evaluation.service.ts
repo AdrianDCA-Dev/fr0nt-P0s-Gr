@@ -15,4 +15,9 @@ export class EvaluationService {
   getModuleEval(idp: any, idpa: any): Observable<any> {
     return this.http.get(`${environment.api_url}/evalmodulestudiante/${idp}/${idpa}`);
   }
+
+  getEvalCriterio(idp: any, idm: any): Observable<any> {
+    return this.http.get(`${environment.api_url}/evalestudiantecriterio/${idp}/${idm}`);
+  }
 }
+

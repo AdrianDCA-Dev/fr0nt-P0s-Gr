@@ -43,50 +43,75 @@
         </div>
       </nb-card-header>
 
-      <nb-card-body>
-        <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped row-border hover">
+      <nb-card-body class="table-responsive">
+        <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger"
+               class="table  table-striped row-border hover">
           <thead>
           <tr>
             <th><b>N</b></th>
-            <th>
+            <th width="20%">
               <b>Modulo</b>
             </th>
-            <th>
+            <th width="20%">
               <b>Modalidad</b>
             </th>
-            <th>
+            <th width="20%">
               <b>Grupo</b>
             </th>
-            <th>
+            <th width="20%">
               <b>Ambiente</b>
             </th>
-            <th><b>Evaluacion</b>
+            <th width="20%"><b>Evaluacion</b>
             </th>
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let item of dataModuleEval; let i= index">
+          <tr *ngFor="let item of dataP; let i= index">
             <td><b>{{i+1}}</b></td>
             <td><b>{{item.nombremodulo}}</b></td>
             <td><b>{{item.modalidad}}</b></td>
             <td><b>{{item.grupo}}</b></td>
             <td><b>{{item.nombre}}</b></td>
             <td>
-              <div class="btn-group" role="group">
-                <button id="btnGroupDrop1" type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <span class="fa fa-navicon"></span>
+              <div class="btn-group" >
+                <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                  <i class="fa fa-navicon"></i>
                 </button>
-                <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                  <button class="dropdown-item">Dropdown link</button>
-                  <button class="dropdown-item">Dropdown link</button>
-                </div>
+                  <div class="dropdown-menu dropdown-menu-right">
+                    <div *ngFor="let items of item.criterio">
+                      <button class="dropdown-item" type="button" data-toggle="modal" data-target="#myModal" (click)="mosff(items)" >{{items.nombre}}</button>
+                    </div>
+                  </div>
               </div>
-            <!--  <button (click)="remove(item)" data-toggle="confirmation" class="btn btn-primary btn-sm"><span class="fa fa-navicon"></span></button> -->
             </td>
           </tr>
           </tbody>
         </table>
       </nb-card-body>
     </nb-card>
+  </div>
+</div>
+<div id="myModal" class="modal fade" role="dialog" data-backdrop="static">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span>ID: {{dataUnion}}</span>
+        <button  type="button" class="close" aria-label="Close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form>
+        <div class="modal-body">
+
+
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-hero-success">
+            Añadir
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>

@@ -1,4 +1,5 @@
 import { NbMenuItem } from '@nebular/theme';
+import { AclService } from "ng2-acl";
 
 export const MENU_ITEMS: NbMenuItem[] = [
   {

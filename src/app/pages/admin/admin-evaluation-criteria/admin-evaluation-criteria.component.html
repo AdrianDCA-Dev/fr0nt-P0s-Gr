@@ -9,7 +9,7 @@
   </nb-card-header>
 
   <nb-card-body>
-    <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped row-border hover">
+    <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-responsive able-striped row-border hover">
       <thead>
       <tr>
         <th><b>N</b></th>
@@ -50,7 +50,7 @@
         <td><b>{{item.tipo_evaluacion | boolTypeEval}}</b></td>
         <td><b>{{item.valido | boolEstado}}</b></td>
         <td>
-          <button (click)="remove(item)" data-toggle="confirmation" class="btn btn-danger btn-sm"><span class="fa fa-trash"></span></button>
+<!--          <button (click)="remove(item)" data-toggle="confirmation" class="btn btn-danger btn-sm"><span class="fa fa-trash"></span></button>-->
           <button type="button" (click)="show(item)" data-toggle="modal" data-target="#myModalEdit" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i></button>
         </td>
       </tr>

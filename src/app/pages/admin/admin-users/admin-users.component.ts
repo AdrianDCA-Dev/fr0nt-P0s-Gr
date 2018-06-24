@@ -63,16 +63,9 @@ export class AdminUsersComponent implements OnInit {
       pagingType: 'full_numbers',
       language: {
         'url': '//cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json',
-      },
+      }
     };
-    this.route.queryParams
-      .subscribe(params => {
-        console.log('videne desde inscripcion', params.modal);
-        if (params.modal === 'show'){
-          params.model = '';
-          $('#myModal').modal('show');
-        }
-      });
+    this.llamando();
     this.myForm = this.fb.group({
       id: [null, Validators.required],
       dni: [null, [Validators.required, Validators.maxLength(15),
@@ -113,6 +106,15 @@ export class AdminUsersComponent implements OnInit {
       fecEmision: [null, Validators.required],
     });
   }
+  llamando(){
+    this.route.queryParams
+      .subscribe(params => {
+        console.log('videne desde inscripcion', params.modal);
+        if (params.modal === 'show') {
+          $('#myModal').modal('show');
+        }
+      })/*.remove()*/;
+  }
   masTitul(model: any) {
       this.datosArray.push({
         titulo: model.titulo,
@@ -131,13 +133,25 @@ export class AdminUsersComponent implements OnInit {
     let anos = moment(fecha).diff(fecha2, 'years');
     console.log('dias', datofec);
     console.log('fecha', anos);
-    this.datos.model = model;
-    this.masTitul(model);
+    //this.datos.model = model;
+    //this.masTitul(model);
+
+    this.datos.dni = model.dni;
+    this.datos.nombres = model.nombres;
+    this.datos.app = model.app;
+    this.datos.apm = model.apm;
+    this.datos.sexo = model.sexo;
+    this.datos.fechaNac = model.fechaNac;
+    this.datos.direccion = model.direccion;
+    this.datos.fono = model.fono;
+    this.datos.email = model.email;
+    this.datos.estado = model.estado;
+    this.datos.role = model.role;
     this.datos.formacion = this.datosArray;
     console.log('prueba', this.datos)
-   /* if (anos >= 18){
+    if (anos >= 18){
       console.log('entro por qui');
-      this.userService.postUsers(model).subscribe(data => {
+      this.userService.postUsers(this.datos).subscribe(data => {
         this.data.push(data.user);
         console.log(data.user);
         $('#myModal').modal('hide');
@@ -146,7 +160,7 @@ export class AdminUsersComponent implements OnInit {
       this.myForm.reset();
     } else {
       this.showToast(this.type, this.title, this.content);
-    }*/
+    }
   }
   show(formData) {
     console.log('formData', formData);

@@ -46,9 +46,20 @@ export class AdminEvaluationCriteriaComponent implements OnInit {
       language: {
         'url': '//cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json',
       },
+      columnDefs: [
+        { "width": "15%", "targets": 1 },
+        { "width": "10%", "targets": 2 },
+        { "width": "10%", "targets": 3 },
+        { "width": "15%", "targets": 4 },
+        { "width": "20%", "targets": 5 },
+        { "width": "10%", "targets": 6 },
+        { "width": "10%", "targets": 7 },
+        { "width": "10%", "targets": 8 },
+      ]
     };
     this.detalleCronogramaService.getInscriptionDetalleCronograma().subscribe(data => {
       this.dataDetalleCronograma = data.detallecronogrma;
+      console.log('detallecronograma', this.dataDetalleCronograma);
     });
     this.myForm = this.fb.group({
       id: [null, Validators.required],
@@ -72,7 +83,7 @@ export class AdminEvaluationCriteriaComponent implements OnInit {
   post(model: any) {
     console.log('criterio POST', model);
     this.evaluationCriteriaService.postEvaluationCriteria(model).subscribe(data => {
-      this.data.push(data.detalleevaluacion);
+      this.data.push(data.criterio);
       $('#myModal').modal('hide');
       swal('¡Buen trabajo!', '¡Hiciste clic en el botón!', 'success');
     });

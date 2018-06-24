@@ -1,3 +1,15 @@
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('div.expandable p').expander({
+      slicePoint:       20,  // default is 100
+      expandPrefix:     ' ', // default is '... '
+      expandText:       '[...]', // default is 'read more'
+      collapseTimer:    5000, // re-collapses after 5 seconds; default is 0, so no re-collapsing
+      userCollapseText: '[^]'  // default is 'read less'
+    });
+
+  });
+</script>
 <nb-card>
   <nb-card-header>
     <div class="box-header with-border">
@@ -11,7 +23,7 @@
   </nb-card-header>
 
   <nb-card-body>
-    <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped row-border hover">
+    <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-responsive table-striped row-border hover">
       <thead>
       <tr>
         <th><b>N</b></th>
@@ -32,7 +44,11 @@
       <tr *ngFor="let item of data; let i= index">
         <td><b>{{i+1}}</b></td>
         <td><b>{{item.nombre}}</b></td>
-        <td><b id="expande">{{item.descripcion}}</b></td>
+        <td>
+          <div class="expandable">
+            <p>{{item.descripcion}}</p>
+          </div>
+        </td>
         <td><b>{{item.valido | boolEstado}}</b></td>
         <td>
           <button type="button" (click)="show(item)" data-toggle="modal" data-target="#myModalEdit" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i></button>

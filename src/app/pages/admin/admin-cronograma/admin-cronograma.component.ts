@@ -174,6 +174,12 @@ export class AdminCronogramaComponent implements OnInit {
       language: {
         'url': '//cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json',
       },
+      columnDefs: [
+      { "width": "15%", "targets": 1 },
+      { "width": "25%", "targets": 2 },
+      { "width": "50%", "targets": 3 },
+      { "width": "10%", "targets": 4 },
+    ],
     };
     this.myForm = this.fb.group({
       id: [null, Validators.required],
@@ -326,15 +332,7 @@ export class AdminCronogramaComponent implements OnInit {
     this.datos.fecha = model.fecha;
     this.datos.programa_academico_id = model.programa_academico_id;
     this.titleGrupo = model.grupo;
-    this.dataAnadir.push({
-      modulo_id: model.modulo_id,
-      persona_id: model.persona_id,
-      ambiente_id: model.ambiente_id,
-      //duracion_dc: model.duracion_dc,
-      grupo: model.grupo,
-      calendario: this.events,
-    });
-    this.datos.detallecronograma = this.dataAnadir;
+
     for (let i = 0; i < this.dataProgramAcademicActive.length; i++) {
       if (model.programa_academico_id === this.dataProgramAcademicActive[i].id) {
           this.nombreProgramAcademy = this.dataProgramAcademicActive[i].nombre;
@@ -355,6 +353,18 @@ export class AdminCronogramaComponent implements OnInit {
           this.titleModulo = this.dataProgramModule[i].nombremodulo;
       }
     }
+    this.dataAnadir.push({
+      modulo_id: model.modulo_id,
+      persona_id: model.persona_id,
+      ambiente_id: model.ambiente_id,
+      modulo: this.titleModulo,
+      docente: this.titleDocente,
+      ambiente: this.titleAmbiente,
+      //duracion_dc: model.duracion_dc,
+      grupo: model.grupo,
+      calendario: this.events,
+    });
+    this.datos.detallecronograma = this.dataAnadir;
     this.cargarTitulos.push({
       modulo: this.titleModulo,
       docente: this.titleDocente,
@@ -364,7 +374,7 @@ export class AdminCronogramaComponent implements OnInit {
     console.log('titulos', this.cargarTitulos);
   }
   eliminarAnadido(model: any) {
-    const index = this.cargarTitulos.indexOf(model);
+    const index = this.dataAnadir.indexOf(model);
     swal({
       title: '¿Estás seguro?',
       text: 'Una vez eliminada, ¡no podrá recuperar este archivo!',
@@ -377,12 +387,12 @@ export class AdminCronogramaComponent implements OnInit {
       if (willDelete.value) {
         if (index > -1) {
           console.log('INDEX2', index);
-          this.cargarTitulos.splice(index, 1);
+          this.dataAnadir.splice(index, 1);
         }
       }
     });
   }
-  post(model: any) {
+  post() {
     console.log('Enviado', this.datos);
     this.cronogramaService.postCronograma(this.datos).subscribe(data => {
       this.data.push(data.cronograma);
@@ -404,23 +414,31 @@ export class AdminCronogramaComponent implements OnInit {
       console.log('modulos', this.dataProgramModule);
       this.Cargandodatos = false;
     });
-    for (let i = 0; i < this.data.length; i++) {
-      console.log('prueba', this.data[i].programa_academico.nombre);
-      if (model.nombre === this.data[i].programa_academico.nombre) {
-        this.v = this.v + 1;
-        console.log('version', this.v);
-        this.myForm.controls['version'].setValue(this.v);
-      } else {
-        this.v = 1;
-        this.myForm.controls['version'].setValue(this.v);
-      }
-      for (let j = 0; j < this.data.length; j++) {
-        console.log('prueba', this.data[j].programa_academico.nombre);
-        if (model.nombre === this.data[j].programa_academico.nombre) {
+    if (this.data.length !== 0){
+      console.log('verdadero');
+      for (let i = 0; i < this.data.length; i++) {
+        console.log('prueba', this.data[i].programa_academico.nombre);
+        if (model.nombre === this.data[i].programa_academico.nombre) {
+          this.v = this.v + 1;
+          console.log('version', this.v);
+          this.myForm.controls['version'].setValue(this.v);
+        } else {
+          this.v = 1;
+          this.myForm.controls['version'].setValue(this.v);
+        }
+        for (let j = 0; j < this.data.length; j++) {
+          console.log('prueba', this.data[j].programa_academico.nombre);
+          if (model.nombre === this.data[j].programa_academico.nombre) {
 
+          }
         }
       }
+    } else {
+      console.log('falso');
+      this.myForm.controls['version'].setValue(this.v);
+      
     }
+
 
     this.myForm.controls['grupo'].setValue('A');
   }

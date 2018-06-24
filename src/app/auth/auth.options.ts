@@ -63,6 +63,9 @@ export const defaultSettings: any = {
         minLength: 4,
         maxLength: 50,
       },
+      roleid: {
+        require: true,
+      }
     },
   },
 

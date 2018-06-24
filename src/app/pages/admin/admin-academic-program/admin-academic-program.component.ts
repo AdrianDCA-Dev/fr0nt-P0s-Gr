@@ -81,6 +81,13 @@ export class AdminAcademicProgramComponent implements OnInit {
       language: {
         'url': '//cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json',
       },
+      columnDefs: [
+        { "width": "40%", "targets": 1 },
+        { "width": "20%", "targets": 2 },
+        { "width": "20%", "targets": 3 },
+        { "width": "10%", "targets": 4 },
+        { "width": "10%", "targets": 5 },
+      ],
     };
     this.myForm = this.fb.group({
       id: [null, Validators.required],

@@ -14,7 +14,7 @@ import { NbAuthResult, NbAuthService } from '../../services/auth.service';
   selector: 'ngx-register',
   styleUrls: ['./register.component.scss'],
   template: `
-    <ngx-auth-block>
+   <!-- <ngx-auth-block>
       <h2 class="title">Sign Up</h2>
       <form (ngSubmit)="register()" #form="ngForm">
 
@@ -144,7 +144,7 @@ import { NbAuthResult, NbAuthService } from '../../services/auth.service';
           Already have an account? <a routerLink="../login"><strong>Sign in</strong></a>
         </small>
       </div>
-    </ngx-auth-block>
+    </ngx-auth-block>-->
   `,
 })
 export class NbRegisterComponent {

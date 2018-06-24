@@ -10,7 +10,7 @@
 
   <nb-card-body>
     <toaster-container [toasterconfig]="config"></toaster-container>
-    <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped row-border hover">
+    <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-responsive table-striped row-border hover">
       <thead>
       <tr>
         <th><b>N</b></th>
@@ -81,11 +81,11 @@
                 Escribe para buscar...
               </ng-template>
               <ng-template ng-label-tmp let-item="item">
-                {{item.cronograma.programa_academico.nombre}} V{{item.cronograma.version}}
+                {{item.programa_academico.nombre}} V{{item.version}}
               </ng-template>
               <ng-template ng-option-tmp let-item="item">
-                <div>{{item.cronograma.programa_academico.nombre}} V{{item.cronograma.version}}</div>
-                <small><b>Docente:</b> {{item.persona.nombres}}</small>
+                <div>{{item.programa_academico.nombre}} V{{item.version}}</div>
+               <!-- <small><b>Docente:</b> {{item.persona.nombres}}</small>-->
               </ng-template>
               <ng-template ng-footer-tmp>
                 Custom footer

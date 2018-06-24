@@ -10,7 +10,7 @@
 
   <nb-card-body>
     <toaster-container [toasterconfig]="config"></toaster-container>
-    <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped row-border hover">
+    <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-responsive table-striped row-border hover">
       <thead>
       <tr>
         <th><b>N</b></th>
@@ -192,7 +192,7 @@
               <div class="text-center"><h6>Programa Academico: {{nombreProgramAcademy}}</h6></div>
               <div class="text-center"><h6>Version: {{datos.version}}</h6></div>
               <div class="text-center"><h6>Grupo: {{titleGrupo}}</h6></div>
-              <div  *ngFor="let title of cargarTitulos; let i= index">
+              <div  *ngFor="let title of dataAnadir; let i= index">
                 <nb-card>
                   <nb-card-body>
                     <nb-card-header>
@@ -215,7 +215,7 @@
                 </nb-card>
               </div>
 
-              <button type="submit" class="btn btn-hero-success pull-right">
+              <button type="submit" (click)="post()" class="btn btn-hero-success pull-right">
                   Guardar
               </button>
             </nb-card-body>

@@ -56,6 +56,13 @@ export class AdminInscriptionComponent implements OnInit {
       language: {
         'url': '//cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json',
       },
+      columnDefs: [
+      { "width": "20%", "targets": 1 },
+      { "width": "30%", "targets": 2 },
+      { "width": "10%", "targets": 3 },
+      { "width": "30%", "targets": 4 },
+      { "width": "10%", "targets": 5 },
+    ],
     };
     this.inscriptionService.getInscriptionEstudiante().subscribe(data => {
       this.dataEstudiante = data.estudiante;

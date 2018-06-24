@@ -38,6 +38,11 @@ export class AdminCampoIndicadoresComponent implements OnInit {
       language: {
         'url': '//cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json',
       },
+      columnDefs: [
+        { "width": "40%", "targets": 1 },
+        { "width": "40%", "targets": 2 },
+        { "width": "20%", "targets": 3 },
+      ]
     };
     this.myForm = this.fb.group({
       id: [null, Validators.required],
@@ -58,7 +63,7 @@ export class AdminCampoIndicadoresComponent implements OnInit {
   }
   anadir(model: any) {
     console.log(model);
-    this.datos.fecha = model.fecha;
+    //this.datos.fecha = model.fecha;
     this.datos.tipo = model.tipo;
 
     this.dataIndicadores.push({

@@ -5,7 +5,9 @@ import {Subject} from 'rxjs/Subject';
 import swal from 'sweetalert2';
 /*declare var jQuery = require('jquery');
 declare var f = require('jquery-expander')(jQuery);*/
+import * as jquery from 'jquery';
 
+import 'jquery';
 declare var $: any;
 
 @Component({
@@ -36,6 +38,17 @@ export class AdminTypeAcademicProgramComponent implements OnInit {
       language: {
         'url': '//cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json',
       },
+      autoWidth: false,
+      scrollY:        "300px",
+      scrollX:        true,
+      scrollCollapse: true,
+      columnDefs: [
+        { "width": "40%", "targets": 1 },
+        { "width": "40%", "targets": 2 },
+        { "width": "10%", "targets": 3 },
+        { "width": "10%", "targets": 3 },
+      ],
+
      /* mRender: function(data, type, row) {
         var trimmedString = data.substring(0, 6);
         return trimmedString + '...';
@@ -52,11 +65,14 @@ export class AdminTypeAcademicProgramComponent implements OnInit {
       valido: [null],
       descripcion: [null],
     });
-    //f('expande').expander();
-   /* jQuery('#expande').({
-
-    });*/
+    $('div.expandable p').expander({
+      slicePoint: 50, // si eliminamos por defecto es 100 caracteres
+      expandText: '[...]', // por defecto es 'read more...'
+      collapseTimer: 5000, // tiempo de para cerrar la expanción si desea poner 0 para no cerrar
+      userCollapseText: '[^]' // por defecto es 'read less...'
+    });
   }
+
   cortarTexto(texto: any, limite: any) {
     const puntosSuspensivos = "...";
     if(texto.length > limite)

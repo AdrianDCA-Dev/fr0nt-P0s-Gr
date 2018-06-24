@@ -37,6 +37,7 @@ import {CampoIndicadoresService} from './services/campo-indicadores/campo-indica
 import { HoraIgualDirective } from './directives/hora-igual/hora-igual.directive';
 import {EvaluationService} from './services/evaluation/evaluation.service';
 import { EstadoBoolDirective } from './directives/estado-bool/estado-bool.directive';
+import {AclService} from "ng2-acl";
 
 const formSetting: any = {
   redirectDelay: 0,
@@ -77,7 +78,7 @@ const formSetting: any = {
   bootstrap: [AppComponent],
   providers: [ AuthGuard, RolePermissionService, PersonService, UserService, TypeAcademicProgramService, AcademicProgramService,
     ModuleService, CronogramaService, ContentService, ToasterService, InscriptionService, EvaluationCriteriaService,
-    CampoIndicadoresService, EvaluationService,
+    CampoIndicadoresService, EvaluationService, AclService,
   { provide: NB_AUTH_TOKEN_WRAPPER_TOKEN, useClass: NbAuthJWTToken },
   { provide: HTTP_INTERCEPTORS, useClass: NbAuthJWTInterceptor, multi: true },
   /*{ provide: HTTP_INTERCEPTORS, useClass: RefreshTokenInterceptor, multi: true, },*/

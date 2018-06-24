@@ -22,7 +22,11 @@ export class AdminStudentComponent implements OnInit {
   id: number;
   data: any[];
   model: any;
-  dataModuleEval: any[];
+  dataModuleEval = [];
+  dataEvalCriterio: any = [];
+  dataPro: any = [];
+  dataUnion: any = {};
+  dataP: any = [];
   constructor(private evaluacion: EvaluationService, private authService: NbAuthService, private fb: FormBuilder) { }
 
   ngOnInit() {
@@ -37,14 +41,55 @@ export class AdminStudentComponent implements OnInit {
       },
     };
   }
-
-  mostrarModulos(id: any) {
-    console.log('idddd', id.programa_academico_id);
-    this.evaluacion.getModuleEval(this.authService.getUs().persona.id, id.programa_academico_id).subscribe(data => {
-      this.dataModuleEval = data.moduleval;
-      this.dtTrigger.next();
-      console.log('mostrar', this.dataModuleEval);
+  mosff(data: any){
+    console.log('mosssssss', data.id);
+    this.dataUnion = data.id;
+  }
+  evalCriterio(id: any) {
+    this.evaluacion.getEvalCriterio(this.authService.getUs().persona.id, id).subscribe(data => {
+      this.dataEvalCriterio = data.criterioEstudiante;
+      console.log('entro');
+      this.guardarCriterios()
     });
   }
-
+  guardarCriterios() {
+    this.dataP = this.dataPro;
+    console.log('guardar', this.dataP);
+  }
+  verfuncion() {
+    for (let i = 0; i < this.dataModuleEval.length; i++) {
+      this.evalCriterio(this.dataModuleEval[i].modulo_id);
+      console.log('crrr', this.guardarCriterios());
+      this.dataPro.push({
+        'nombremodulo': this.dataModuleEval[i].nombremodulo,
+        'modalidad': this.dataModuleEval[i].modalidad,
+        'grupo' : this.dataModuleEval[i].grupo,
+        'nombre' : this.dataModuleEval[i].nombre,
+        'criterio': this.dataP,
+      });
+    }
+  }
+  mostrarModulos(id: any) {
+    console.log('idddd', id.id);
+    this.evaluacion.getModuleEval(this.authService.getUs().persona.id, id.id).subscribe(data => {
+      this.dataModuleEval = data.moduleval;
+      this.dtTrigger.next();
+   /*   console.log('mostrar', this.dataModuleEval);
+      this.verfuncion();*/
+      for (let i = 0; i < this.dataModuleEval.length; i++) {
+        //this.evalCriterio(this.dataModuleEval[i].modulo_id);
+        this.evaluacion.getEvalCriterio(this.authService.getUs().persona.id, this.dataModuleEval[i].modulo_id).subscribe(data => {
+          this.dataEvalCriterio = data.criterioEstudiante;
+          this.dataPro.push({
+            'nombremodulo': this.dataModuleEval[i].nombremodulo,
+            'modalidad': this.dataModuleEval[i].modalidad,
+            'grupo' : this.dataModuleEval[i].grupo,
+            'nombre' : this.dataModuleEval[i].nombre,
+            'criterio': this.dataEvalCriterio,
+          });
+        });
+      }
+    });
+    this.guardarCriterios();
+  }
 }
