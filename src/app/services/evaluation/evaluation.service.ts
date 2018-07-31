@@ -19,5 +19,13 @@ export class EvaluationService {
   getEvalCriterio(idp: any, idm: any): Observable<any> {
     return this.http.get(`${environment.api_url}/evalestudiantecriterio/${idp}/${idm}`);
   }
+
+  getDetalleEstudiante(id: any): Observable<any> {
+    return this.http.get(`${environment.api_url}/detalleestudiante/` + id);
+  }
+
+  postDetalleEvalucion(data: any): Observable<any> {
+    return this.http.post(`${environment.api_url}/evaluacionestudiante`, data);
+  }
 }
 

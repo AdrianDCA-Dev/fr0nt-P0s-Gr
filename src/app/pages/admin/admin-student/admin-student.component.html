@@ -80,7 +80,10 @@
                 </button>
                   <div class="dropdown-menu dropdown-menu-right">
                     <div *ngFor="let items of item.criterio">
-                      <button class="dropdown-item" type="button" data-toggle="modal" data-target="#myModal" (click)="mosff(items)" >{{items.nombre}}</button>
+                      <button class="dropdown-item" type="button" data-toggle="modal" data-target="#myModal"
+                              (click)="estudiantes(items)">
+                        {{items.criterio_nombre}}
+                      </button>
                     </div>
                   </div>
               </div>
@@ -96,19 +99,52 @@
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <span>ID: {{dataUnion}}</span>
+        <span>ID Criterio: {{dataUnion.criterio_id}}</span>
+        <span>ID Detalle: {{dataUnion.detalle_cronograma_id}}</span>
         <button  type="button" class="close" aria-label="Close" data-dismiss="modal">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form>
+      <form (ngSubmit)="postEvaluacion(form)" #form="ngForm" >
         <div class="modal-body">
-
-
+          <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTriggers"
+                 class="table table-responsive able-striped row-border hover">
+            <thead>
+            <tr>
+              <th width="10%"><b>N</b></th>
+              <th width="25%">
+                <b>Dni</b>
+              </th>
+              <th width="50%">
+                <b>Estudiante</b>
+              </th>
+              <th width="15%">
+                <b>Nota</b>
+              </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let item of dataDetalleEstudiante; let i= index">
+              <td>
+                <b>
+                  {{i+1}}
+                </b>
+                <input type="hidden" [(ngModel)]="prueba.inscripcion_id" value="{{item.id}}" #inscripcion_id="ngModel">
+                <input type="hidden" [(ngModel)]="prueba.detalle_cronograma_id" value="{{item.detalle_cronograma_id}}"
+                       #detalle_cronograma_id="ngModel">
+              </td>
+              <td><b>{{item.persona.dni}}</b></td>
+              <td><b>{{item.persona.nombres}} {{item.persona.app}} {{item.persona.apm}}</b></td>
+              <td><input type="text" [(ngModel)]="prueba.valor" class="form-control" placeholder="Nota"
+                         #valor="ngModel">
+              </td>
+            </tr>
+            </tbody>
+          </table>
         </div>
         <div class="modal-footer">
           <button type="submit" class="btn btn-hero-success">
-            Añadir
+            Guardar
           </button>
         </div>
       </form>

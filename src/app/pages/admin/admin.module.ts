@@ -6,6 +6,7 @@ import {DataTablesModule} from 'angular-datatables';
 import {ToasterModule} from 'angular2-toaster';
 import { CalendarModule} from 'angular-calendar';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { FormsModule } from '@angular/forms';
 import {
   NbActionsModule,
   NbCardModule,
@@ -25,6 +26,7 @@ import {BoolTypeEvalPipe} from "../../pipes/bool-type-eval/bool-type-eval.pipe";
     CalendarModule.forRoot(),
     NgSelectModule,
     NbMenuModule,
+    FormsModule,
   ],
   declarations: [
    ...routedComponents, BoolEstadoPipe, BoolTypeEvalPipe

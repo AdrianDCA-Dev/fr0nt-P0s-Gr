@@ -1,3 +1,178 @@
-<p>
-  admin-admin-teacher works!
-</p>
+<nb-card>
+  <nb-card-header>
+    <div class="box-header with-border">
+      Lista Docente
+    </div>
+  </nb-card-header>
+
+  <nb-card-body>
+    <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger"
+           class="table table-striped row-border hover">
+      <thead>
+      <tr>
+        <th><b>N</b></th>
+        <th>
+          <b>DNI</b>
+        </th>
+        <th>
+          <b>Nombre</b>
+        </th>
+        <th>
+          <b>Apellido P</b>
+        </th>
+        <th>
+          <b>Apellido M</b>
+        </th>
+        <th>
+          <b>Grupo</b>
+        </th>
+        <th>
+          <b>Modulo</b>
+        </th>
+        <th><b>Acciones</b>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let item of data; let i= index">
+        <td><b>{{i+1}}</b></td>
+        <td><b>{{item.dni}}</b></td>
+        <td><b>{{item.nombres}}</b></td>
+        <td><b>{{item.app}}</b></td>
+        <td><b>{{item.apm}}</b></td>
+        <td><b>{{item.grupo}}</b></td>
+        <td><b>{{item.nombremodulo}}</b></td>
+        <td>
+          <button type="button" (click)="show(item)" data-toggle="modal"
+                  data-target="#myModal" class="btn btn-warning btn-sm">
+            <i class="fa fa-edit"></i>
+          </button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </nb-card-body>
+</nb-card>
+<div id="myModal" class="modal fade" role="dialog" data-backdrop="static">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button  type="button" class="close" aria-label="Close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form (ngSubmit)="postEvaluacion(form)" #form="ngForm" >
+        <div class="modal-body">
+
+          <div class="container">
+            <div class="stepwizard">
+              <div class="stepwizard-row setup-panel">
+                <div class="stepwizard-step">
+                  <a href="#step-1" type="button" class="btn btn-success btn-circle" disabled="disabled">1</a>
+                </div>
+                <div class="stepwizard-step">
+                  <a href="#step-2" type="button" class="btn btn-default btn-circle" disabled="disabled">2</a>
+                </div>
+                <div class="stepwizard-step">
+                  <a href="#step-3" type="button" class="btn btn-default btn-circle" disabled="disabled">3</a>
+                </div>
+              </div>
+            </div>
+
+            <form role="form">
+              <div class="panel panel-primary setup-content" id="step-1">
+
+                <div class="panel-body">
+                  <div class="content text-center">
+                    <br>
+                     <nb-card class="cart">
+                       <p></p>
+                       <div class="">
+                         <p>
+                           <button class="btn btn-success glow btn-rectangle but">SI</button>
+                         </p>
+                       </div>
+                       <div class="">
+                         <p>
+                           <button class="btn btn-success glow btn-rectangle but">NO</button>
+                         </p>
+
+                       </div>
+                       <p></p>
+                     </nb-card>
+
+                    <p>
+                      <button class="btn btn-primary nextBtn but" type="button">Siguiente</button>
+                    </p>
+                  </div>
+
+                </div>
+
+              </div>
+              <div class="panel panel-primary setup-content" id="step-2">
+
+                <div class="panel-body">
+                  <div class="content text-center">
+                    <br>
+                    <nb-card class="cart">
+                      <p></p>
+                      <div class="">
+                        <p>
+                          <button class="btn btn-success glow btn-rectangle but">SI</button>
+                        </p>
+                      </div>
+                      <div class="">
+                        <p>
+                          <button class="btn btn-success glow btn-rectangle but">NO</button>
+                        </p>
+
+                      </div>
+                      <p></p>
+                    </nb-card>
+
+                    <p>
+                      <button class="btn btn-primary nextBtn but" type="button">Siguiente</button>
+                    </p>
+                  </div>
+
+                </div>
+
+              </div>
+              <div class="panel panel-primary setup-content" id="step-3">
+
+                <div class="panel-body">
+                  <div class="content text-center">
+                    <br>
+                    <nb-card class="cart">
+                      <p></p>
+                      <div class="">
+                        <p>
+                          <button class="btn btn-success glow btn-rectangle but">SI</button>
+                        </p>
+                      </div>
+                      <div class="">
+                        <p>
+                          <button class="btn btn-success glow btn-rectangle but">NO</button>
+                        </p>
+
+                      </div>
+                      <p></p>
+                    </nb-card>
+
+                    <p>
+                      <button class="btn btn-primary nextBtn but" type="button">Siguiente</button>
+                    </p>
+                  </div>
+
+                </div>
+
+              </div>
+            </form>
+          </div>
+
+
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

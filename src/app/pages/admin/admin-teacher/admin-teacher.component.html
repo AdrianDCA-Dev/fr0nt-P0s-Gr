@@ -1,3 +1,1446 @@
-<p>
-  admin-teacher works!
-</p>
+<nb-card xmlns="http://www.w3.org/1999/html">
+  <nb-card-header>
+    <div class="box-header with-border">
+      Lista Docente
+    </div>
+  </nb-card-header>
+
+  <nb-card-body>
+    <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger"
+           class="table table-responsive table-striped row-border hover">
+      <thead>
+      <tr>
+        <th><b>N</b></th>
+        <th>
+          <b>DNI</b>
+        </th>
+        <th>
+          <b>Nombre</b>
+        </th>
+        <th>
+          <b>Apellido P</b>
+        </th>
+        <th>
+          <b>Apellido M</b>
+        </th>
+        <th>
+          <b>Programa AC</b>
+        </th>
+        <th>
+          <b>Modulo</b>
+        </th>
+        <th><b>Acciones</b>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let item of data; let i= index">
+        <td><b>{{i+1}}</b></td>
+        <td><b>{{item.detalle_cronograma.persona.dni}}</b></td>
+        <td><b>{{item.detalle_cronograma.persona.nombres}}</b></td>
+        <td><b>{{item.detalle_cronograma.persona.app}}</b></td>
+        <td><b>{{item.detalle_cronograma.persona.apm}}</b></td>
+        <td><b>{{item.detalle_cronograma.cronograma.programa_academico.nombre}}</b></td>
+        <td><b>{{item.detalle_cronograma.modulo.nombremodulo}}</b></td>
+        <td>
+          <button type="button" (click)="criterioDocente(item)" data-toggle="modal"
+                  data-target="#myModal" class="btn btn-warning btn-sm">
+            <i class="fa fa-edit"></i>
+          </button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </nb-card-body>
+
+</nb-card>
+
+<div id="myModal" class="modal fade" role="dialog" data-backdrop="static">
+  <div class="modal-dialog modal-lg" >
+    <div class="modal-content">
+      <div class="modal-header">
+        <button  type="button" class="close" aria-label="Close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <form (ngSubmit)="postEvaluacion(form)" #form="ngForm" >
+        <div *ngIf="quizActive">
+          <div class="modal-body">
+
+            <div class="container">
+
+              <div class="stepwizard">
+                <div class="stepwizard-row setup-panel">
+                  <div class="stepwizard-step">
+                    <!--<div class="btn-toolbar" >-->
+                    <a class="btn btn-circle"  [ngClass]="{'btn-info': question.selected !== null,
+                      'btn-danger': question.selected === null}" *ngFor=" let question of quizQuestions; let i=index "
+                       (click)="setActiveQuestion(i)" >
+                        <span [ngClass]="{'fa fa-pencil':question.selected !== null,
+                        'fa fa-question': question.selected === null}" >
+                        </span>
+                    </a>
+                    <!--</div>-->
+                  </div>
+
+                </div>
+              </div>
+
+
+              <div class="panel panel-primary setup-content" *ngIf="!resultActive">
+                <div class="panel-body setup-cart" *ngIf="!finalize">
+                  <div class="content text-center">
+                    <br>
+
+                    <nb-card class="cart">
+                      <p></p>
+                      <b>{{ activeQuestion+1+". "+quizQuestions[activeQuestion].text}}</b>
+                      <p></p>
+
+                      <div *ngIf="quizQuestions[activeQuestion].type ==='text'" >
+                        <div *ngFor="let  answer of quizQuestions[activeQuestion].possibilities; let i=index " >
+                          <button class="btn btn-success glow btn-rectangle but can answer"
+                                  [ngClass]="{'bg-info': i === quizQuestions[activeQuestion].selected }"
+                                  (click)="selectAnswer(i)" >
+                            {{answer.answer}}
+                          </button>
+                          <p></p>
+                        </div>
+                      </div>
+                      <p></p>
+                    </nb-card>
+                    <p></p>
+                    <p>
+                      <button class="btn btn-primary but" (click)="questionAnswered()" >Siguiente</button>
+                    </p>
+                  </div>
+
+                </div>
+
+                <div class="panel-body setup-cart" *ngIf="finalize">
+                  <div class="content text-center">
+                    <br>
+
+                    <nb-card class="text-center">
+                      <p></p>
+                      <b>¿Estás seguro de que quieres enviar tus respuestas?</b>
+                      <p></p>
+                      <div>
+                        <p></p>
+                        <button class="btn btn-success glow btn-rectangle but can" (click)="finalizeAnswer()" >Si</button>
+                        <p></p>
+                        <button  class="btn btn-danger glow btn-rectangle but can" (click)="finalize=false" >No</button>
+                        <p></p>
+                      </div>
+                      <p></p>
+                    </nb-card>
+                    <p></p>
+                  </div>
+
+                </div>
+              </div>
+              <div class="panel-body setup-cart" *ngIf="resultActive">
+                <div class="content text-center">
+                  <br>
+
+                  <nb-card class="text-center">
+                    <p></p>
+                    <div>
+                      <p></p>
+                      <h3><strong>Nota Final: {{  calculatePercentage() }}</strong></h3>
+                      <p></p>
+                    </div>
+                    <p></p>
+                  </nb-card>
+                  <p></p>
+                </div>
+
+              </div>
+
+
+            </div>
+
+          </div>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<!--<div id="myModal" class="modal fade" role="dialog" data-backdrop="static">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button  type="button" class="close" aria-label="Close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form (ngSubmit)="postEvaluacion(form)" #form="ngForm" >
+        <div class="modal-body">
+
+          <div class="container">
+            <form role="form">
+            <div class="stepwizard">
+              <div class="stepwizard-row setup-panel">
+                <div class="stepwizard-step">
+                  <a href="#step-1" type="button" class="btn btn-success btn-circle" disabled="disabled">1</a>
+                </div>
+                <div class="stepwizard-step">
+                  <a href="#step-2" type="button" class="btn btn-default btn-circle" disabled="disabled">2</a>
+                </div>
+                <div class="stepwizard-step">
+                  <a href="#step-3" type="button" class="btn btn-default btn-circle" disabled="disabled">3</a>
+                </div>
+                <div class="stepwizard-step">
+                  <a href="#step-4" type="button" class="btn btn-default btn-circle" disabled="disabled">4</a>
+                </div>
+                <div class="stepwizard-step">
+                  <a href="#step-5" type="button" class="btn btn-default btn-circle" disabled="disabled">5</a>
+                </div>
+                <div class="stepwizard-step">
+                  <a href="#step-6" type="button" class="btn btn-default btn-circle" disabled="disabled">6</a>
+                </div>
+                <div class="stepwizard-step">
+                  <a href="#step-7" type="button" class="btn btn-default btn-circle" disabled="disabled">7</a>
+                </div>
+                <div class="stepwizard-step">
+                  <a href="#step-8" type="button" class="btn btn-default btn-circle" disabled="disabled">8</a>
+                </div>
+                <div class="stepwizard-step">
+                  <a href="#step-9" type="button" class="btn btn-default btn-circle" disabled="disabled">9</a>
+                </div>
+                <div class="stepwizard-step">
+                  <a href="#step-10" type="button" class="btn btn-default btn-circle" disabled="disabled">10</a>
+                </div>
+                <div class="stepwizard-step">
+                  <a href="#step-11" type="button" class="btn btn-success btn-circle" disabled="disabled">11</a>
+                </div>
+                <div class="stepwizard-step">
+                  <a href="#step-12" type="button" class="btn btn-default btn-circle" disabled="disabled">12</a>
+                </div>
+                <div class="stepwizard-step">
+                  <a href="#step-13" type="button" class="btn btn-default btn-circle" disabled="disabled">13</a>
+                </div>
+                <div class="stepwizard-step">
+                  <a href="#step-14" type="button" class="btn btn-default btn-circle" disabled="disabled">14</a>
+                </div>
+                <div class="stepwizard-step">
+                  <a href="#step-15" type="button" class="btn btn-default btn-circle" disabled="disabled">15</a>
+                </div>
+                <div class="stepwizard-step">
+                  <a href="#step-16" type="button" class="btn btn-default btn-circle" disabled="disabled">16</a>
+                </div>
+                <div class="stepwizard-step">
+                  <a href="#step-17" type="button" class="btn btn-default btn-circle" disabled="disabled">17</a>
+                </div>
+                <div class="stepwizard-step">
+                  <a href="#step-18" type="button" class="btn btn-default btn-circle" disabled="disabled">18</a>
+                </div>
+                <div class="stepwizard-step">
+                  <a href="#step-19" type="button" class="btn btn-default btn-circle" disabled="disabled">19</a>
+                </div>
+                <div class="stepwizard-step">
+                  <a href="#step-20" type="button" class="btn btn-default btn-circle" disabled="disabled">20</a>
+                </div>
+              </div>
+            </div>
+
+
+               <div class="panel panel-primary setup-content" id="step-1">
+                  <div class="panel-body setup-cart">
+                    <div class="content text-center">
+                      <br>
+
+                      <nb-card class="cart">
+                        <p></p>
+                        <b>Asiste el docente con puntualidad a la clase.</b>
+                        <p></p>
+
+                        <div class="">
+                          <p>
+                            <input type="button" value="NUNCA" class="btn btn-success glow btn-rectangle but can">
+                          </p>
+                        </div>
+                        <div class="">
+                          <p>
+                            <input type="button" value="POCAS VECES" class="btn btn-success glow btn-rectangle but can">
+
+                          </p>
+
+                        </div>
+                        <div class="">
+                          <p>
+                            <input type="button" value="REGULARMENTE"
+                                   class="btn btn-success glow btn-rectangle but can">
+                          </p>
+
+                        </div>
+                        <div class="">
+                          <p>
+                            <input type="button" value="GENERALMENTE"
+                                   class="btn btn-success glow btn-rectangle but can">
+                          </p>
+                        </div>
+                        <div class="">
+                          <input type="button" value="SIEMPRE" class="btn btn-success glowbtn-rectangle but can">
+                        </div>
+
+                        <p></p>
+                      </nb-card>
+                      <p>
+                        <button class="btn btn-primary nextBtn but" type="button">Siguiente</button>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+               <div class="panel panel-primary setup-content" id="step-2">
+
+                 <div class="panel-body">
+                   <div class="content text-center">
+                     <br>
+
+                     <nb-card class="cart setup-cart">
+                       <p></p>
+                       <b>Explica de forma clara y comprensible el propósito, la metodología de trabajo,
+                         el sistema de evaluación de la asignatura, al inicio del módulo.</b>
+                       <p></p>
+                       <p></p>
+
+                       <div class="">
+                         <p>
+                           <input type="button" value="NUNCA" class="btn btn-success glow btn-rectangle but can">
+                         </p>
+                       </div>
+                       <div class="">
+                         <p>
+                           <input type="button" value="POCAS VECES" class="btn btn-success glow btn-rectangle but can">
+
+                         </p>
+
+                       </div>
+                       <div class="">
+                         <p>
+                           <input type="button" value="REGULARMENTE"
+                                  class="btn btn-success glow btn-rectangle but can">
+                         </p>
+
+                       </div>
+                       <div class="">
+                         <p>
+                           <input type="button" value="GENERALMENTE"
+                                  class="btn btn-success glow btn-rectangle but can">
+                         </p>
+                       </div>
+                       <div class="">
+                         <input type="button" value="SIEMPRE" class="btn btn-success glowbtn-rectangle but can">
+                       </div>
+                       <p></p>
+                     </nb-card>
+                     <p>
+                       <button class="btn btn-primary nextBtn but" type="button">Siguiente</button>
+                     </p>
+                   </div>
+
+                 </div>
+
+               </div>
+               <div class="panel panel-primary setup-content" id="step-3">
+
+                 <div class="panel-body">
+                   <div class="content text-center">
+                     <br>
+
+                     <nb-card class="cart setup-cart">
+                       <p></p>
+                       <b>El docente evalúa los aprendizajes previos de los estudiantes.</b>
+                       <p></p>
+                       <p></p>
+
+                       <div class="">
+                         <p>
+                           <input type="button" value="NUNCA" class="btn btn-success glow btn-rectangle but can">
+                         </p>
+                       </div>
+                       <div class="">
+                         <p>
+                           <input type="button" value="POCAS VECES" class="btn btn-success glow btn-rectangle but can">
+
+                         </p>
+
+                       </div>
+                       <div class="">
+                         <p>
+                           <input type="button" value="REGULARMENTE"
+                                  class="btn btn-success glow btn-rectangle but can">
+                         </p>
+
+                       </div>
+                       <div class="">
+                         <p>
+                           <input type="button" value="GENERALMENTE"
+                                  class="btn btn-success glow btn-rectangle but can">
+                         </p>
+                       </div>
+                       <div class="">
+                         <input type="button" value="SIEMPRE" class="btn btn-success glowbtn-rectangle but can">
+                       </div>
+                       <p></p>
+                     </nb-card>
+                     <p>
+                       <button class="btn btn-primary nextBtn but" type="button">Siguiente</button>
+                     </p>
+                   </div>
+
+                 </div>
+
+               </div>
+               <div class="panel panel-primary setup-content" id="step-4">
+
+                 <div class="panel-body">
+                   <div class="content text-center">
+                     <br>
+                     &lt;!&ndash; <nb-card class="cart">
+                        <p></p>
+                        <div class="">
+                          <p>
+                            <button id="mi-boton" class="btn btn-success glow btn-rectangle but">NUNCA</button>
+                          </p>
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">POCAS VECES</button>
+                          </p>
+
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">REGULARMENTE</button>
+                          </p>
+
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">GENERALMENTE</button>
+                          </p>
+                        </div>
+                        <div class="">
+                          <button class="btn btn-success glowbtn-rectangle but">SIEMPRE</button>
+                        </div>
+                        <p></p>
+                      </nb-card>&ndash;&gt;
+                     <nb-card class="cart setup-cart">
+                       <p></p>
+                       <b>Demuestra dominio de la asignatura en el desarrollo de cada contenido.</b>
+                       <p></p>
+                       <div class="setup-cart-content">
+                         <div class="" *ngFor="let item of eval; let i= index">
+
+                           <button class="btn btn-success glow btn-rectangle but can"
+                                   (click)="prest(item)">
+                             {{item.nombre}}
+                           </button>
+                           <p></p>
+                         </div>
+                       </div>
+                       <p></p>
+                     </nb-card>
+                     <p>
+                       <button class="btn btn-primary nextBtn but" type="button">Siguiente</button>
+                     </p>
+                   </div>
+
+                 </div>
+
+               </div>
+               <div class="panel panel-primary setup-content" id="step-5">
+
+                 <div class="panel-body">
+                   <div class="content text-center">
+                     <br>
+                     &lt;!&ndash; <nb-card class="cart">
+                        <p></p>
+                        <div class="">
+                          <p>
+                            <button id="mi-boton" class="btn btn-success glow btn-rectangle but">NUNCA</button>
+                          </p>
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">POCAS VECES</button>
+                          </p>
+
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">REGULARMENTE</button>
+                          </p>
+
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">GENERALMENTE</button>
+                          </p>
+                        </div>
+                        <div class="">
+                          <button class="btn btn-success glowbtn-rectangle but">SIEMPRE</button>
+                        </div>
+                        <p></p>
+                      </nb-card>&ndash;&gt;
+                     <nb-card class="cart setup-cart">
+                       <p></p>
+                       <b>Explica cada tema de manera completa, con teoría,
+                         ejemplos y aclaraciones a los estudiantes.</b>
+                       <p></p>
+                       <div class="setup-cart-content">
+                         <div class="" *ngFor="let item of eval; let i= index">
+
+                           <button class="btn btn-success glow btn-rectangle but can"
+                                   (click)="prest(item)">
+                             {{item.nombre}}
+                           </button>
+                           <p></p>
+                         </div>
+                       </div>
+                       <p></p>
+                     </nb-card>
+                     <p>
+                       <button class="btn btn-primary nextBtn but" type="button">Siguiente</button>
+                     </p>
+                   </div>
+
+                 </div>
+
+               </div>
+               <div class="panel panel-primary setup-content" id="step-6">
+
+                 <div class="panel-body">
+                   <div class="content text-center">
+                     <br>
+                     &lt;!&ndash; <nb-card class="cart">
+                        <p></p>
+                        <div class="">
+                          <p>
+                            <button id="mi-boton" class="btn btn-success glow btn-rectangle but">NUNCA</button>
+                          </p>
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">POCAS VECES</button>
+                          </p>
+
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">REGULARMENTE</button>
+                          </p>
+
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">GENERALMENTE</button>
+                          </p>
+                        </div>
+                        <div class="">
+                          <button class="btn btn-success glowbtn-rectangle but">SIEMPRE</button>
+                        </div>
+                        <p></p>
+                      </nb-card>&ndash;&gt;
+                     <nb-card class="cart">
+                       <p></p>
+                       <b>Las actividades realizadas están dirigidas a la resolución de
+                         problemas del contexto de forma clara y aplicable.</b>
+                       <p></p>
+                       <div class="" *ngFor="let item of eval; let i= index">
+
+                         <button class="btn btn-success glow btn-rectangle but can"
+                                 (click)="prest(item)">
+                           {{item.nombre}}
+                         </button>
+                         <p></p>
+                       </div>
+                       <p></p>
+                     </nb-card>
+                     <p>
+                       <button class="btn btn-primary nextBtn but" type="button">Siguiente</button>
+                     </p>
+                   </div>
+
+                 </div>
+
+               </div>
+               <div class="panel panel-primary setup-content" id="step-7">
+
+                 <div class="panel-body">
+                   <div class="content text-center">
+                     <br>
+                     &lt;!&ndash; <nb-card class="cart">
+                        <p></p>
+                        <div class="">
+                          <p>
+                            <button id="mi-boton" class="btn btn-success glow btn-rectangle but">NUNCA</button>
+                          </p>
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">POCAS VECES</button>
+                          </p>
+
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">REGULARMENTE</button>
+                          </p>
+
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">GENERALMENTE</button>
+                          </p>
+                        </div>
+                        <div class="">
+                          <button class="btn btn-success glowbtn-rectangle but">SIEMPRE</button>
+                        </div>
+                        <p></p>
+                      </nb-card>&ndash;&gt;
+                     <nb-card class="cart">
+                       <p></p>
+                       <b>Realiza actividades donde los estudiantes vinculen la
+                         teoría con la práctica de forma efectiva.</b>
+                       <p></p>
+                       <div class="" *ngFor="let item of eval; let i= index">
+
+                         <button class="btn btn-success glow btn-rectangle but can"
+                                 (click)="prest(item)">
+                           {{item.nombre}}
+                         </button>
+                         <p></p>
+                       </div>
+                       <p></p>
+                     </nb-card>
+                     <p>
+                       <button class="btn btn-primary nextBtn but" type="button">Siguiente</button>
+                     </p>
+                   </div>
+
+                 </div>
+
+               </div>
+               <div class="panel panel-primary setup-content" id="step-8">
+
+                 <div class="panel-body">
+                   <div class="content text-center">
+                     <br>
+                     &lt;!&ndash; <nb-card class="cart">
+                        <p></p>
+                        <div class="">
+                          <p>
+                            <button id="mi-boton" class="btn btn-success glow btn-rectangle but">NUNCA</button>
+                          </p>
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">POCAS VECES</button>
+                          </p>
+
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">REGULARMENTE</button>
+                          </p>
+
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">GENERALMENTE</button>
+                          </p>
+                        </div>
+                        <div class="">
+                          <button class="btn btn-success glowbtn-rectangle but">SIEMPRE</button>
+                        </div>
+                        <p></p>
+                      </nb-card>&ndash;&gt;
+                     <nb-card class="cart">
+                       <p></p>
+                       <b>Ayuda a los estudiantes en la realización de las actividades de manera oportuna y precisa.</b>
+                       <p></p>
+                       <div class="" *ngFor="let item of eval; let i= index">
+
+                         <button class="btn btn-success glow btn-rectangle but can"
+                                 (click)="prest(item)">
+                           {{item.nombre}}
+                         </button>
+                         <p></p>
+                       </div>
+                       <p></p>
+                     </nb-card>
+                     <p>
+                       <button class="btn btn-primary nextBtn but" type="button">Siguiente</button>
+                     </p>
+                   </div>
+
+                 </div>
+
+               </div>
+               <div class="panel panel-primary setup-content" id="step-9">
+
+                 <div class="panel-body">
+                   <div class="content text-center">
+                     <br>
+                     &lt;!&ndash; <nb-card class="cart">
+                        <p></p>
+                        <div class="">
+                          <p>
+                            <button id="mi-boton" class="btn btn-success glow btn-rectangle but">NUNCA</button>
+                          </p>
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">POCAS VECES</button>
+                          </p>
+
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">REGULARMENTE</button>
+                          </p>
+
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">GENERALMENTE</button>
+                          </p>
+                        </div>
+                        <div class="">
+                          <button class="btn btn-success glowbtn-rectangle but">SIEMPRE</button>
+                        </div>
+                        <p></p>
+                      </nb-card>&ndash;&gt;
+                     <nb-card class="cart">
+                       <p></p>
+                       <b>Responde a las preguntas que formulan los estudiantes en clase.</b>
+                       <p></p>
+                       <div class="" *ngFor="let item of eval; let i= index">
+
+                         <button class="btn btn-success glow btn-rectangle but can"
+                                 (click)="prest(item)">
+                           {{item.nombre}}
+                         </button>
+                         <p></p>
+                       </div>
+                       <p></p>
+                     </nb-card>
+                     <p>
+                       <button class="btn btn-primary nextBtn but" type="button">Siguiente</button>
+                     </p>
+                   </div>
+
+                 </div>
+
+               </div>
+               <div class="panel panel-primary setup-content" id="step-10">
+
+                 <div class="panel-body">
+                   <div class="content text-center">
+                     <br>
+                     &lt;!&ndash; <nb-card class="cart">
+                        <p></p>
+                        <div class="">
+                          <p>
+                            <button id="mi-boton" class="btn btn-success glow btn-rectangle but">NUNCA</button>
+                          </p>
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">POCAS VECES</button>
+                          </p>
+
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">REGULARMENTE</button>
+                          </p>
+
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">GENERALMENTE</button>
+                          </p>
+                        </div>
+                        <div class="">
+                          <button class="btn btn-success glowbtn-rectangle but">SIEMPRE</button>
+                        </div>
+                        <p></p>
+                      </nb-card>&ndash;&gt;
+                     <nb-card class="cart">
+                       <p></p>
+                       <b>Propicia un clima adecuado para el trabajo colaborativo (equipo) en el aula.</b>
+                       <p></p>
+                       <div class="" *ngFor="let item of eval; let i= index">
+
+                         <button class="btn btn-success glow btn-rectangle but can"
+                                 (click)="prest(item)">
+                           {{item.nombre}}
+                         </button>
+                         <p></p>
+                       </div>
+                       <p></p>
+                     </nb-card>
+                     <p>
+                       <button class="btn btn-primary nextBtn but" type="button">Siguiente</button>
+                     </p>
+                   </div>
+
+                 </div>
+
+               </div>
+               <div class="panel panel-primary setup-content" id="step-11">
+
+                 <div class="panel-body">
+                   <div class="content text-center">
+                     <br>
+                     &lt;!&ndash; <nb-card class="cart">
+                        <p></p>
+                        <div class="">
+                          <p>
+                            <button id="mi-boton" class="btn btn-success glow btn-rectangle but">NUNCA</button>
+                          </p>
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">POCAS VECES</button>
+                          </p>
+
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">REGULARMENTE</button>
+                          </p>
+
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">GENERALMENTE</button>
+                          </p>
+                        </div>
+                        <div class="">
+                          <button class="btn btn-success glowbtn-rectangle but">SIEMPRE</button>
+                        </div>
+                        <p></p>
+                      </nb-card>&ndash;&gt;
+                     <nb-card class="cart">
+                       <p></p>
+                       <b>Utiliza recursos didácticos apropiados para enseñar.</b>
+                       <p></p>
+                       <div class="" *ngFor="let item of eval; let i= index">
+
+                         <button class="btn btn-success glow btn-rectangle but can"
+                                 (click)="prest(item)">
+                           {{item.nombre}}
+                         </button>
+                         <p></p>
+                       </div>
+                       <p></p>
+                     </nb-card>
+                     <p>
+                       <button class="btn btn-primary nextBtn but" type="button">Siguiente</button>
+                     </p>
+                   </div>
+
+                 </div>
+
+               </div>
+               <div class="panel panel-primary setup-content" id="step-12">
+
+                 <div class="panel-body">
+                   <div class="content text-center">
+                     <br>
+                     &lt;!&ndash; <nb-card class="cart">
+                        <p></p>
+                        <div class="">
+                          <p>
+                            <button id="mi-boton" class="btn btn-success glow btn-rectangle but">NUNCA</button>
+                          </p>
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">POCAS VECES</button>
+                          </p>
+
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">REGULARMENTE</button>
+                          </p>
+
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">GENERALMENTE</button>
+                          </p>
+                        </div>
+                        <div class="">
+                          <button class="btn btn-success glowbtn-rectangle but">SIEMPRE</button>
+                        </div>
+                        <p></p>
+                      </nb-card>&ndash;&gt;
+                     <nb-card class="cart">
+                       <p></p>
+                       <b>Proporciona material de apoyo actualizado y
+                         contextualizado (textos, fotocopias, libros sitios web).</b>
+                       <p></p>
+                       <div class="" *ngFor="let item of eval; let i= index">
+
+                         <button class="btn btn-success glow btn-rectangle but can"
+                                 (click)="prest(item)">
+                           {{item.nombre}}
+                         </button>
+                         <p></p>
+                       </div>
+                       <p></p>
+                     </nb-card>
+                     <p>
+                       <button class="btn btn-primary nextBtn but" type="button">Siguiente</button>
+                     </p>
+                   </div>
+
+                 </div>
+
+               </div>
+               <div class="panel panel-primary setup-content" id="step-13">
+
+                 <div class="panel-body">
+                   <div class="content text-center">
+                     <br>
+                     &lt;!&ndash; <nb-card class="cart">
+                        <p></p>
+                        <div class="">
+                          <p>
+                            <button id="mi-boton" class="btn btn-success glow btn-rectangle but">NUNCA</button>
+                          </p>
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">POCAS VECES</button>
+                          </p>
+
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">REGULARMENTE</button>
+                          </p>
+
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">GENERALMENTE</button>
+                          </p>
+                        </div>
+                        <div class="">
+                          <button class="btn btn-success glowbtn-rectangle but">SIEMPRE</button>
+                        </div>
+                        <p></p>
+                      </nb-card>&ndash;&gt;
+                     <nb-card class="cart">
+                       <p></p>
+                       <b>Propicia que la clase se desarrolle en un ambiente afectivo, cordial y de confianza.</b>
+                       <p></p>
+                       <div class="" *ngFor="let item of eval; let i= index">
+
+                         <button class="btn btn-success glow btn-rectangle but can"
+                                 (click)="prest(item)">
+                           {{item.nombre}}
+                         </button>
+                         <p></p>
+                       </div>
+                       <p></p>
+                     </nb-card>
+                     <p>
+                       <button class="btn btn-primary nextBtn but" type="button">Siguiente</button>
+                     </p>
+                   </div>
+
+                 </div>
+
+               </div>
+               <div class="panel panel-primary setup-content" id="step-14">
+
+                 <div class="panel-body">
+                   <div class="content text-center">
+                     <br>
+                     &lt;!&ndash; <nb-card class="cart">
+                        <p></p>
+                        <div class="">
+                          <p>
+                            <button id="mi-boton" class="btn btn-success glow btn-rectangle but">NUNCA</button>
+                          </p>
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">POCAS VECES</button>
+                          </p>
+
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">REGULARMENTE</button>
+                          </p>
+
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">GENERALMENTE</button>
+                          </p>
+                        </div>
+                        <div class="">
+                          <button class="btn btn-success glowbtn-rectangle but">SIEMPRE</button>
+                        </div>
+                        <p></p>
+                      </nb-card>&ndash;&gt;
+                     <nb-card class="cart">
+                       <p></p>
+                       <b>Desarrolla la clase de manera predominantemente interactiva, dinámica, motivadora.</b>
+                       <p></p>
+                       <div class="" *ngFor="let item of eval; let i= index">
+
+                         <button class="btn btn-success glow btn-rectangle but can"
+                                 (click)="prest(item)">
+                           {{item.nombre}}
+                         </button>
+                         <p></p>
+                       </div>
+                       <p></p>
+                     </nb-card>
+                     <p>
+                       <button class="btn btn-primary nextBtn but" type="button">Siguiente</button>
+                     </p>
+                   </div>
+
+                 </div>
+
+               </div>
+               <div class="panel panel-primary setup-content" id="step-15">
+
+                 <div class="panel-body">
+                   <div class="content text-center">
+                     <br>
+                     &lt;!&ndash; <nb-card class="cart">
+                        <p></p>
+                        <div class="">
+                          <p>
+                            <button id="mi-boton" class="btn btn-success glow btn-rectangle but">NUNCA</button>
+                          </p>
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">POCAS VECES</button>
+                          </p>
+
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">REGULARMENTE</button>
+                          </p>
+
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">GENERALMENTE</button>
+                          </p>
+                        </div>
+                        <div class="">
+                          <button class="btn btn-success glowbtn-rectangle but">SIEMPRE</button>
+                        </div>
+                        <p></p>
+                      </nb-card>&ndash;&gt;
+                     <nb-card class="cart">
+                       <p></p>
+                       <b>Evalúa los aprendizajes en correspondencia con lo desarrollado en la clase.</b>
+                       <p></p>
+                       <div class="" *ngFor="let item of eval; let i= index">
+
+                         <button class="btn btn-success glow btn-rectangle but can"
+                                 (click)="prest(item)">
+                           {{item.nombre}}
+                         </button>
+                         <p></p>
+                       </div>
+                       <p></p>
+                     </nb-card>
+                     <p>
+                       <button class="btn btn-primary nextBtn but" type="button">Siguiente</button>
+                     </p>
+                   </div>
+
+                 </div>
+
+               </div>
+               <div class="panel panel-primary setup-content" id="step-16">
+
+                 <div class="panel-body">
+                   <div class="content text-center">
+                     <br>
+                     &lt;!&ndash; <nb-card class="cart">
+                        <p></p>
+                        <div class="">
+                          <p>
+                            <button id="mi-boton" class="btn btn-success glow btn-rectangle but">NUNCA</button>
+                          </p>
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">POCAS VECES</button>
+                          </p>
+
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">REGULARMENTE</button>
+                          </p>
+
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">GENERALMENTE</button>
+                          </p>
+                        </div>
+                        <div class="">
+                          <button class="btn btn-success glowbtn-rectangle but">SIEMPRE</button>
+                        </div>
+                        <p></p>
+                      </nb-card>&ndash;&gt;
+                     <nb-card class="cart">
+                       <p></p>
+                       <b> Analizan y socializa los resultados de la evaluación con objetividad y respeto.</b>
+                       <p></p>
+                       <div class="" *ngFor="let item of eval; let i= index">
+
+                         <button class="btn btn-success glow btn-rectangle but can"
+                                 (click)="prest(item)">
+                           {{item.nombre}}
+                         </button>
+                         <p></p>
+                       </div>
+                       <p></p>
+                     </nb-card>
+                     <p>
+                       <button class="btn btn-primary nextBtn but" type="button">Siguiente</button>
+                     </p>
+                   </div>
+
+                 </div>
+
+               </div>
+               <div class="panel panel-primary setup-content" id="step-17">
+
+                 <div class="panel-body">
+                   <div class="content text-center">
+                     <br>
+                     &lt;!&ndash; <nb-card class="cart">
+                        <p></p>
+                        <div class="">
+                          <p>
+                            <button id="mi-boton" class="btn btn-success glow btn-rectangle but">NUNCA</button>
+                          </p>
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">POCAS VECES</button>
+                          </p>
+
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">REGULARMENTE</button>
+                          </p>
+
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">GENERALMENTE</button>
+                          </p>
+                        </div>
+                        <div class="">
+                          <button class="btn btn-success glowbtn-rectangle but">SIEMPRE</button>
+                        </div>
+                        <p></p>
+                      </nb-card>&ndash;&gt;
+                     <nb-card class="cart">
+                       <p></p>
+                       <b>Orienta bibliografía para profundizar en el contenido abordado en la clase.</b>
+                       <p></p>
+                       <div class="" *ngFor="let item of eval; let i= index">
+
+                         <button class="btn btn-success glow btn-rectangle but can"
+                                 (click)="prest(item)">
+                           {{item.nombre}}
+                         </button>
+                         <p></p>
+                       </div>
+                       <p></p>
+                     </nb-card>
+                     <p>
+                       <button class="btn btn-primary nextBtn but" type="button">Siguiente</button>
+                     </p>
+                   </div>
+
+                 </div>
+
+               </div>
+               <div class="panel panel-primary setup-content" id="step-18">
+
+                 <div class="panel-body">
+                   <div class="content text-center">
+                     <br>
+                     &lt;!&ndash; <nb-card class="cart">
+                        <p></p>
+                        <div class="">
+                          <p>
+                            <button id="mi-boton" class="btn btn-success glow btn-rectangle but">NUNCA</button>
+                          </p>
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">POCAS VECES</button>
+                          </p>
+
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">REGULARMENTE</button>
+                          </p>
+
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">GENERALMENTE</button>
+                          </p>
+                        </div>
+                        <div class="">
+                          <button class="btn btn-success glowbtn-rectangle but">SIEMPRE</button>
+                        </div>
+                        <p></p>
+                      </nb-card>&ndash;&gt;
+                     <nb-card class="cart">
+                       <p></p>
+                       <b>Culmina la clase a la hora establecida.</b>
+                       <p></p>
+                       <div class="" *ngFor="let item of eval; let i= index">
+
+                         <button class="btn btn-success glow btn-rectangle but can"
+                                 (click)="prest(item)">
+                           {{item.nombre}}
+                         </button>
+                         <p></p>
+                       </div>
+                       <p></p>
+                     </nb-card>
+                     <p>
+                       <button class="btn btn-primary nextBtn but" type="button">Siguiente</button>
+                     </p>
+                   </div>
+
+                 </div>
+
+               </div>
+               <div class="panel panel-primary setup-content" id="step-19">
+
+                 <div class="panel-body">
+                   <div class="content text-center">
+                     <br>
+                     &lt;!&ndash; <nb-card class="cart">
+                        <p></p>
+                        <div class="">
+                          <p>
+                            <button id="mi-boton" class="btn btn-success glow btn-rectangle but">NUNCA</button>
+                          </p>
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">POCAS VECES</button>
+                          </p>
+
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">REGULARMENTE</button>
+                          </p>
+
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">GENERALMENTE</button>
+                          </p>
+                        </div>
+                        <div class="">
+                          <button class="btn btn-success glowbtn-rectangle but">SIEMPRE</button>
+                        </div>
+                        <p></p>
+                      </nb-card>&ndash;&gt;
+                     <nb-card class="cart">
+                       <p></p>
+                       <b>Orienta los trabajos extra clase (tarea) de manera clara y precisa.</b>
+                       <p></p>
+                       <div class="" *ngFor="let item of eval; let i= index">
+
+                         <button class="btn btn-success glow btn-rectangle but can"
+                                 (click)="prest(item)">
+                           {{item.nombre}}
+                         </button>
+                         <p></p>
+                       </div>
+                       <p></p>
+                     </nb-card>
+                     <p>
+                       <button class="btn btn-primary nextBtn but" type="button">Siguiente</button>
+                     </p>
+                   </div>
+
+                 </div>
+
+               </div>
+               <div class="panel panel-primary setup-content" id="step-20">
+
+                 <div class="panel-body">
+                   <div class="content text-center">
+                     <br>
+                     &lt;!&ndash; <nb-card class="cart">
+                        <p></p>
+                        <div class="">
+                          <p>
+                            <button id="mi-boton" class="btn btn-success glow btn-rectangle but">NUNCA</button>
+                          </p>
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">POCAS VECES</button>
+                          </p>
+
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">REGULARMENTE</button>
+                          </p>
+
+                        </div>
+                        <div class="">
+                          <p>
+                            <button class="btn btn-success glow btn-rectangle but">GENERALMENTE</button>
+                          </p>
+                        </div>
+                        <div class="">
+                          <button class="btn btn-success glowbtn-rectangle but">SIEMPRE</button>
+                        </div>
+                        <p></p>
+                      </nb-card>&ndash;&gt;
+                     <nb-card class="cart">
+                       <p></p>
+                       <b>Cumple con el cronograma de actividades establecidas al inicio del módulo.</b>
+                       <p></p>
+                       <div class="" *ngFor="let item of eval; let i= index">
+
+                         <button class="btn btn-success glow btn-rectangle but can"
+                                 (click)="prest(item)">
+                           {{item.nombre}}
+                         </button>
+                         <p></p>
+                       </div>
+                       <p></p>
+                     </nb-card>
+                     <p>
+ &lt;!&ndash;                      <button class="btn btn-primary nextBtn but" type="button">Siguiente</button>&ndash;&gt;
+                       <button class="btn btn-danger but" type="submit">Finish!</button>
+                     </p>
+                   </div>
+
+                 </div>
+
+               </div>
+              &lt;!&ndash;   <div class="panel panel-primary setup-content" id="step-2">
+                <div class="panel-heading">
+                  <h3 class="panel-title">Destination</h3>
+                </div>
+                <div class="panel-body">
+                  <div class="form-group">
+                    <label class="control-label">Company Name</label>
+                    <input maxlength="200" type="text" required="required" class="form-control"
+                           placeholder="Enter Company Name" />
+                  </div>
+                  <div class="form-group">
+                    <label class="control-label">Company Address</label>
+                    <input maxlength="200" type="text" required="required" class="form-control"
+                           placeholder="Enter Company Address" />
+                  </div>
+                  <button class="btn btn-primary nextBtn pull-right" type="button">Next</button>
+                </div>
+              </div>
+
+              <div class="panel panel-primary setup-content" id="step-3">
+                <div class="panel-heading">
+                  <h3 class="panel-title">Schedule</h3>
+                </div>
+                <div class="panel-body">
+                  <div class="form-group">
+                    <label class="control-label">Company Name</label>
+                    <input maxlength="200" type="text" required="required" class="form-control"
+                           placeholder="Enter Company Name" />
+                  </div>
+                  <div class="form-group">
+                    <label class="control-label">Company Address</label>
+                    <input maxlength="200" type="text" required="required" class="form-control"
+                           placeholder="Enter Company Address" />
+                  </div>
+                  <button class="btn btn-primary nextBtn pull-right" type="button">Next</button>
+                </div>
+              </div>
+
+              <div class="panel panel-primary setup-content" id="step-4">
+                <div class="panel-heading">
+                  <h3 class="panel-title">Cargo</h3>
+                </div>
+                <div class="panel-body">
+                  <div class="form-group">
+                    <label class="control-label">Company Name</label>
+                    <input maxlength="200" type="text" required="required" class="form-control"
+                           placeholder="Enter Company Name" />
+                  </div>
+                  <div class="form-group">
+                    <label class="control-label">Company Address</label>
+                    <input maxlength="200" type="text" required="required" class="form-control"
+                           placeholder="Enter Company Address" />
+                  </div>
+                  <button class="btn btn-success pull-right" type="submit">Finish!</button>
+                </div>
+              </div>&ndash;&gt;
+            </form>
+          </div>
+
+
+        </div>
+      </form>
+    </div>
+  </div>
+</div>-->
+
+<!--<div id="myModal" class="modal fade" role="dialog" data-backdrop="static">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button  type="button" class="close" aria-label="Close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form (ngSubmit)="postEvaluacion(form)" #form="ngForm" >
+        <div class="modal-body">
+
+          <div class="container">
+
+          </div>
+
+        </div>
+      </form>
+    </div>
+  </div>
+</div>-->

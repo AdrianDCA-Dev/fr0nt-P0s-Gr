@@ -12,7 +12,8 @@
 
   <nb-card-body>
     <toaster-container [toasterconfig]="config"></toaster-container>
-    <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-responsive table-striped row-border hover">
+    <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger"
+           class="table table-responsive table-striped row-border hover">
       <thead>
       <tr>
         <th><b>N</b></th>
@@ -45,15 +46,12 @@
         <td><b>{{item.modalidad}}</b></td>
         <td><b>{{item.tipo}}</b></td>
         <td><b>{{item.credito}}</b></td>
-      <!--  <td>
-          <button type="button" (click)="showmodule(item)" data-toggle="modal" data-target="#myModalShowModule" class="btn btn-primary btn-sm"><i class="fa fa-eye"></i></button>
-        </td>
-        <td>
-          <button type="button" (click)="showconten(item)" data-toggle="modal" data-target="#myModalShowContent" class="btn btn-primary btn-sm"><i class="fa fa-eye"></i></button>
-        </td> -->
         <td>
         <!--  <button (click)="remove(item)" data-toggle="confirmation" class="btn btn-danger btn-sm"><span class="fa fa-trash"></span></button> -->
-          <button type="button" (click)="show(item)" data-toggle="modal" data-target="#myModalEdit" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i></button>
+          <button type="button" (click)="show(item)" data-toggle="modal"
+                  data-target="#myModalEdit" class="btn btn-warning btn-sm">
+            <i class="fa fa-edit"></i>
+          </button>
         </td>
       </tr>
       </tbody>

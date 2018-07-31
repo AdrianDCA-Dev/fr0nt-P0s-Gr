@@ -38,6 +38,9 @@ import { HoraIgualDirective } from './directives/hora-igual/hora-igual.directive
 import {EvaluationService} from './services/evaluation/evaluation.service';
 import { EstadoBoolDirective } from './directives/estado-bool/estado-bool.directive';
 import {AclService} from "ng2-acl";
+import {EvaluationDocenteService} from "./services/evaluation-docente/evaluation-docente.service";
+import {EvaluationAdminDocenteService} from "./services/evaluation-admin-docente/evaluation-admin-docente.service";
+import {QuizService} from "./services/quiz/quiz.service";
 
 const formSetting: any = {
   redirectDelay: 0,
@@ -79,6 +82,7 @@ const formSetting: any = {
   providers: [ AuthGuard, RolePermissionService, PersonService, UserService, TypeAcademicProgramService, AcademicProgramService,
     ModuleService, CronogramaService, ContentService, ToasterService, InscriptionService, EvaluationCriteriaService,
     CampoIndicadoresService, EvaluationService, AclService,
+    EvaluationDocenteService, EvaluationAdminDocenteService, QuizService,
   { provide: NB_AUTH_TOKEN_WRAPPER_TOKEN, useClass: NbAuthJWTToken },
   { provide: HTTP_INTERCEPTORS, useClass: NbAuthJWTInterceptor, multi: true },
   /*{ provide: HTTP_INTERCEPTORS, useClass: RefreshTokenInterceptor, multi: true, },*/

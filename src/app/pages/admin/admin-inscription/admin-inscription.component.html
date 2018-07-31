@@ -71,7 +71,9 @@
             </small>
           </div>
           <div class="form-group has-feedback" [ngClass]="{'has-success': myForm.controls['detalle_cronograma_id'].valid,
-                                    'has-error': myForm.controls['detalle_cronograma_id'].invalid && (myForm.controls['detalle_cronograma_id'].touched || myForm.controls['detalle_cronograma_id'].dirty)}">
+                                    'has-error': myForm.controls['detalle_cronograma_id'].invalid &&
+                                    (myForm.controls['detalle_cronograma_id'].touched ||
+                                    myForm.controls['detalle_cronograma_id'].dirty)}">
             <ng-select [items]="dataDetalleCronograma" [class.form-control-danger]="myForm.controls['detalle_cronograma_id'].invalid && myForm.controls['detalle_cronograma_id'].touched"
                        formControlName="detalle_cronograma_id"
                        bindLabel="cronograma.programa_academico.nombre"

@@ -63,7 +63,19 @@ export class AdminUsersComponent implements OnInit {
       pagingType: 'full_numbers',
       language: {
         'url': '//cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json',
-      }
+      },
+      columnDefs: [
+        { "width": "10%", "targets": 1 },
+        { "width": "10%", "targets": 2 },
+        { "width": "10%", "targets": 3 },
+        { "width": "10%", "targets": 4 },
+        { "width": "10%", "targets": 5 },
+        { "width": "10%", "targets": 6 },
+        { "width": "10%", "targets": 7 },
+        { "width": "10%", "targets": 8 },
+        { "width": "10%", "targets": 9 },
+        { "width": "10%", "targets": 10 },
+      ],
     };
     this.llamando();
     this.myForm = this.fb.group({
